@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AutoRefresh } from "./AutoRefresh";
 import { FavoriteStar } from "./FavoriteStar";
+import { NewTagButton } from "./NewTag";
 import { RecordVisit } from "./RecordVisit";
 import { RepoPicker } from "./RepoPicker";
 import { SignedInAs } from "./SignedInAs";
@@ -45,6 +46,9 @@ export function RepoHeader({
             <a href={`https://github.com/${owner}/${repo}`} target="_blank" rel="noreferrer" className="hover:underline">
               {owner}/{repo}
             </a>
+            <span className="ml-3">
+              <NewTagButton owner={owner} repo={repo} />
+            </span>
           </h1>
         </div>
         <div className="flex flex-col items-end gap-2">

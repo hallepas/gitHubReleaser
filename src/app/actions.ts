@@ -1,6 +1,8 @@
 "use server";
 
 import { restPost } from "@/lib/github";
+import { tagExists } from "@/lib/tags";
+import { tagNameError } from "@/lib/versions";
 
 export type ReviewResult = { ok: true } | { ok: false; error: string };
 
@@ -82,4 +84,24 @@ export async function dispatchWorkflow(input: {
     return { ok: false, error: "Invalid request" };
   }
   return run(() => restPost(`/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`, { ref }));
+}
+
+/**
+ * Creates a tag on the exact commit the user saw in the preview (not the branch head at
+ * submit time). Pushing a tag with a user token starts workflows triggered by `push: tags`.
+ */
+export async function createTag(input: {
+  owner: string;
+  repo: string;
+  tag: string;
+  sha: string;
+}): Promise<ReviewResult> {
+  const { owner, repo, tag, sha } = input;
+  if (!validRepo(owner, repo) || !/^[0-9a-f]{40}$/.test(sha)) return { ok: false, error: "Invalid request" };
+  const nameError = tagNameError(tag);
+  if (nameError) return { ok: false, error: nameError };
+  return run(async () => {
+    if (await tagExists(owner, repo, tag)) throw new Error(`Tag ${tag} already exists.`);
+    await restPost(`/repos/${owner}/${repo}/git/refs`, { ref: `refs/tags/${tag}`, sha });
+  });
 }

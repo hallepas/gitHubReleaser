@@ -57,6 +57,7 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li><b>Run again for &lt;tag&gt;</b>: start the whole pipeline for an older version.</li>
         <li><b>Open in GitHub</b>.</li>
       </ul>
+      <p><b>+ New tag</b> creates a tag on any branch to start a release. It shows the latest release and preview, suggests the next version (release or preview, following your tag style) and blocks tags that already exist.</p>
       <p>Your environment protection rules always apply. GitHub decides who may approve or re-run.</p>
     </td>
   </tr>
@@ -141,7 +142,7 @@ Create a token at *GitHub → Settings → Developer settings → Personal acces
 | Token type | Required permissions |
 |------------|----------------------|
 | Classic | `repo` (add `read:org` so repositories from your organizations appear in search) |
-| Fine-grained | Repository access to the repositories you need, plus: **Metadata** (read), **Contents** (read), **Deployments** (read), **Environments** (read), **Actions** (**read & write**, for approve, re-run and dispatch) |
+| Fine-grained | Repository access to the repositories you need, plus: **Metadata** (read), **Contents** (**read & write**, for creating tags), **Deployments** (read), **Environments** (read), **Actions** (**read & write**, for approve, re-run and dispatch) |
 
 > **Not sure it worked?** Just start the dashboard. It checks the login on every page. If something is wrong (gh not installed, not logged in, token invalid or expired, or proxy certificate problems) it shows a **step-by-step setup guide** instead of the dashboard, with a **Check again** button. When everything works, the header shows *Signed in as &lt;your login&gt;* and whether the token comes from the GitHub CLI or `.env.local`. A yellow banner warns if a classic token is missing the `repo` or `read:org` scope.
 
@@ -220,6 +221,7 @@ URL options:
 | Redeploy stage | `POST actions/jobs/{id}/rerun` |
 | Continue pipeline | `POST actions/runs/{id}/rerun-failed-jobs` |
 | Run again for a tag | `POST actions/workflows/{id}/dispatches` |
+| New tag | GraphQL `refs` (branches, tags), `POST git/refs` |
 
 For deployments to show up, your workflow jobs must use GitHub environments:
 
@@ -298,12 +300,15 @@ src/
     r/[owner]/[repo]/…          Releases and Pipelines views
     api/repos                   Repository list for search (cached for 10 min)
     api/stage-options           What can be done with a stage (loaded when a chip is clicked)
-    actions.ts                  Server actions: approve, reject, re-run, dispatch
+    api/tag-options             Branches, tags and version suggestions for "New tag"
+    actions.ts                  Server actions: approve, reject, re-run, dispatch, create tag
   components/                   UI (MatrixTable, StageMenu, RepoPicker, …)
   lib/
     github.ts                   REST and GraphQL client, token handling
     data.ts                     Builds the release/stage matrix
     stageOptions.ts             Re-run and dispatch rules
+    tags.ts                     Branches and tags for "New tag"
+    versions.ts                 Version parsing and next-version suggestions
     model.ts                    Types and status mapping
 ```
 

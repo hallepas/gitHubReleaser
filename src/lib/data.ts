@@ -4,6 +4,7 @@ import {
   type Matrix,
   type MatrixRow,
   type PendingApproval,
+  type RunningRelease,
   type StageCell,
   STATUS_TEXT,
   deploymentStatus,
@@ -259,6 +260,47 @@ export async function getWorkflows(owner: string, repo: string): Promise<Workflo
 export async function getLatestWorkflowId(owner: string, repo: string): Promise<number | undefined> {
   const data = await rest<{ workflow_runs: Run[] }>(`/repos/${owner}/${repo}/actions/runs?per_page=1`);
   return data.workflow_runs[0]?.workflow_id;
+}
+
+/**
+ * Runs of the release workflow that are still going but have no deployment yet
+ * (e.g. still building), so they are not part of the deployment matrix.
+ */
+export async function getRunningReleases(owner: string, repo: string, matrix: Matrix): Promise<RunningRelease[]> {
+  const { workflow_runs: runs } = await rest<{ workflow_runs: Run[] }>(
+    `/repos/${owner}/${repo}/actions/runs?per_page=30`,
+  );
+  // The release workflow is the one whose runs created the deployments we already show.
+  const deployedRunIds = new Set(matrix.rows.flatMap((r) => Object.values(r.cells).map((c) => c.runId)));
+  const releaseWorkflows = new Set(runs.filter((r) => deployedRunIds.has(r.id)).map((r) => r.workflow_id));
+  const shownRefs = new Set(matrix.rows.map((r) => r.ref));
+
+  const active = runs.filter(
+    (r) =>
+      r.status !== "completed" &&
+      !shownRefs.has(r.head_branch ?? r.head_sha) &&
+      (releaseWorkflows.size ? releaseWorkflows.has(r.workflow_id) : /release|deploy|\bcd\b/i.test(r.name)),
+  );
+
+  return Promise.all(
+    active.map(async (run) => {
+      const { jobs } = await rest<{ jobs: Job[] }>(`/repos/${owner}/${repo}/actions/runs/${run.id}/jobs?per_page=100`);
+      const current =
+        jobs.find((j) => j.status === "in_progress") ?? jobs.find((j) => j.status !== "completed");
+      return {
+        runId: run.id,
+        title: `${run.display_title} #${run.run_number}`,
+        url: run.html_url,
+        ref: run.head_branch ?? run.head_sha.slice(0, 7),
+        status: run.status.replace("_", " "),
+        currentJob: current?.name,
+        jobsDone: jobs.filter((j) => j.status === "completed").length,
+        jobsTotal: jobs.length,
+        startedAt: formatDate(run.created_at),
+        actor: run.actor ? { login: run.actor.login, avatarUrl: run.actor.avatar_url } : undefined,
+      };
+    }),
+  );
 }
 
 export async function getWorkflowMatrix(

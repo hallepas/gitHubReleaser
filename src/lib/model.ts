@@ -60,6 +60,20 @@ export interface Matrix {
   pending: PendingApproval[];
 }
 
+/** A release workflow run that has not reached its first environment yet. */
+export interface RunningRelease {
+  runId: number;
+  title: string;
+  url: string;
+  ref: string;
+  status: string;
+  currentJob?: string;
+  jobsDone: number;
+  jobsTotal: number;
+  startedAt: string;
+  actor?: { login: string; avatarUrl: string };
+}
+
 export function deploymentStatus(state: string | undefined): StageStatus {
   switch ((state ?? "").toUpperCase()) {
     case "SUCCESS":

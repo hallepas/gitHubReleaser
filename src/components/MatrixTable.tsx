@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { type Matrix, formatDate } from "@/lib/model";
+import { type Matrix, type RunningRelease, formatDate } from "@/lib/model";
 import { StageMenu } from "./StageMenu";
 import { ApprovalControls } from "./ApprovalControls";
 
@@ -26,6 +26,34 @@ export function PendingBanner({ matrix }: { matrix: Matrix }) {
           {p.approval && <ApprovalControls approval={p.approval} release={p.rowTitle} compact />}
         </div>
       ))}
+    </div>
+  );
+}
+
+export function RunningReleases({ runs }: { runs: RunningRelease[] }) {
+  if (!runs.length) return null;
+  return (
+    <div className="border-y border-blue-200 bg-blue-50/60 px-6 py-3 text-sm dark:border-blue-900 dark:bg-blue-950/40">
+      <div className="mb-2 text-xs font-medium uppercase tracking-wide text-blue-900 dark:text-blue-200">In progress</div>
+      <div className="flex flex-col gap-2">
+        {runs.map((r) => (
+          <div key={r.runId} className="flex items-center gap-3">
+            <span className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-blue-600 border-t-transparent dark:border-blue-400 dark:border-t-transparent" aria-hidden />
+            {r.actor && <img src={r.actor.avatarUrl} alt={r.actor.login} title={r.actor.login} className="h-6 w-6 rounded-full" />}
+            <div className="min-w-0 flex-1">
+              <a href={r.url} target="_blank" rel="noreferrer" className="font-medium text-blue-700 hover:underline dark:text-blue-400">
+                {r.title}
+              </a>
+              <span className="ml-2 font-mono text-xs text-gray-600 dark:text-gray-400">⑂ {r.ref}</span>
+              <div className="truncate text-xs text-gray-600 dark:text-gray-400">
+                {r.status}
+                {r.currentJob && <> · {r.currentJob}</>} · {r.jobsDone}/{r.jobsTotal} jobs done · started {r.startedAt}
+              </div>
+            </div>
+            <span className="hidden text-xs text-gray-500 sm:block dark:text-gray-400">Appears below once it deploys to its first stage</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
