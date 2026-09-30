@@ -13,7 +13,7 @@ export function WorkflowPicker({
   const pathname = usePathname();
   return (
     <select
-      className="rounded border border-gray-300 bg-white px-2 py-1 text-sm"
+      className="rounded border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-900"
       value={selected ?? ""}
       onChange={(e) => router.push(`${pathname}?workflow=${e.target.value}`)}
     >

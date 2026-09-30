@@ -101,19 +101,19 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
         role="combobox"
         aria-expanded={open}
         aria-controls="repo-results"
-        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:focus:border-blue-500"
       />
       {open && (
         <ul
           id="repo-results"
           ref={listRef}
           role="listbox"
-          className="absolute z-10 mt-1 max-h-96 w-full overflow-auto rounded border border-gray-200 bg-white shadow-lg"
+          className="absolute z-10 mt-1 max-h-96 w-full overflow-auto rounded border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/50"
         >
-          {error && <li className="px-3 py-2 text-sm text-red-700">{error}</li>}
-          {!error && !repos && <li className="px-3 py-2 text-sm text-gray-500">Loading repositories…</li>}
+          {error && <li className="px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</li>}
+          {!error && !repos && <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">Loading repositories…</li>}
           {repos && results.length === 0 && (
-            <li className="px-3 py-2 text-sm text-gray-500">No repository matches “{query}”.</li>
+            <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">No repository matches “{query}”.</li>
           )}
           {results.map((r, i) => (
             <li
@@ -125,19 +125,19 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
                 e.preventDefault();
                 go(r.fullName);
               }}
-              className={`flex cursor-pointer items-start gap-2 px-3 py-2 text-sm ${i === active ? "bg-blue-50" : ""}`}
+              className={`flex cursor-pointer items-start gap-2 px-3 py-2 text-sm ${i === active ? "bg-blue-50 dark:bg-blue-950" : ""}`}
             >
               <FavoriteStar repo={r.fullName} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate">
-                    <span className="text-gray-500">{r.fullName.split("/")[0]}/</span>
+                    <span className="text-gray-500 dark:text-gray-400">{r.fullName.split("/")[0]}/</span>
                     <span className="font-medium">{r.fullName.split("/")[1]}</span>
                   </span>
-                  {r.private && <span className="rounded border px-1 text-[10px] text-gray-500">private</span>}
-                  {r.archived && <span className="rounded border px-1 text-[10px] text-amber-700">archived</span>}
+                  {r.private && <span className="rounded border px-1 text-[10px] text-gray-500 dark:text-gray-400">private</span>}
+                  {r.archived && <span className="rounded border px-1 text-[10px] text-amber-700 dark:text-amber-400">archived</span>}
                 </div>
-                {r.description && <div className="truncate text-xs text-gray-500">{r.description}</div>}
+                {r.description && <div className="truncate text-xs text-gray-500 dark:text-gray-400">{r.description}</div>}
               </div>
             </li>
           ))}

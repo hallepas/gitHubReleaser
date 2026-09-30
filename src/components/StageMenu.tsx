@@ -42,14 +42,14 @@ export function StageMenu({ owner, repo, name, cell, release, runId, gitRef }: P
     <div ref={box} className="relative">
       <StageChip name={name} cell={{ ...base, url: undefined }} onClick={() => setOpen((o) => !o)} />
       {open && (
-        <div className="absolute right-0 z-20 mt-1 w-80 rounded border border-gray-200 bg-white p-3 text-sm shadow-lg">
+        <div className="absolute right-0 z-20 mt-1 w-80 rounded border border-gray-200 bg-white p-3 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/50">
           <div className="font-medium">
             {release} → {name}
           </div>
-          {base.tooltip && <div className="mb-3 whitespace-pre-line text-xs text-gray-500">{base.tooltip}</div>}
+          {base.tooltip && <div className="mb-3 whitespace-pre-line text-xs text-gray-500 dark:text-gray-400">{base.tooltip}</div>}
           {cell?.approval ? (
             <>
-              <div className="mb-2 text-xs text-gray-500">Required reviewers: {cell.approval.reviewers.join(", ") || "–"}</div>
+              <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">Required reviewers: {cell.approval.reviewers.join(", ") || "–"}</div>
               <ApprovalControls approval={cell.approval} release={release} onDone={() => setTimeout(() => setOpen(false), 1500)} />
             </>
           ) : effectiveRunId ? (
@@ -63,10 +63,10 @@ export function StageMenu({ owner, repo, name, cell, release, runId, gitRef }: P
               stage={name}
             />
           ) : (
-            <p className="text-xs text-gray-500">No GitHub Actions run is linked to this stage.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">No GitHub Actions run is linked to this stage.</p>
           )}
           {githubUrl && (
-            <a href={githubUrl} target="_blank" rel="noreferrer" className="mt-3 block border-t border-gray-100 pt-2 text-xs text-blue-700 hover:underline">
+            <a href={githubUrl} target="_blank" rel="noreferrer" className="mt-3 block border-t border-gray-100 pt-2 text-xs text-blue-700 hover:underline dark:border-gray-800 dark:text-blue-400">
               Open in GitHub ↗
             </a>
           )}
@@ -117,9 +117,9 @@ function RedeployOptions({
     };
   }, [owner, repo, runId, jobId, refName]);
 
-  if (error) return <p className="text-xs text-red-700">{error}</p>;
-  if (!options) return <p className="text-xs text-gray-500">Checking what can be done…</p>;
-  if (done) return <p className="text-xs font-medium text-green-700">{done}</p>;
+  if (error) return <p className="text-xs text-red-700 dark:text-red-400">{error}</p>;
+  if (!options) return <p className="text-xs text-gray-500 dark:text-gray-400">Checking what can be done…</p>;
+  if (done) return <p className="text-xs font-medium text-green-700 dark:text-green-400">{done}</p>;
 
   const execute = (fn: () => Promise<ReviewResult>, message: string) =>
     startTransition(async () => {
@@ -156,8 +156,8 @@ function RedeployOptions({
 
   return (
     <div className="flex flex-col gap-2 text-xs">
-      {options.reason && <p className="text-gray-500">{options.reason}</p>}
-      {choices.length === 0 && !options.reason && <p className="text-gray-500">No actions available for this stage.</p>}
+      {options.reason && <p className="text-gray-500 dark:text-gray-400">{options.reason}</p>}
+      {choices.length === 0 && !options.reason && <p className="text-gray-500 dark:text-gray-400">No actions available for this stage.</p>}
       {selected ? (
         <>
           <p>{selected.detail}</p>
@@ -169,7 +169,7 @@ function RedeployOptions({
             >
               {pending ? "Starting…" : "Confirm"}
             </button>
-            <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100">
+            <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
               Cancel
             </button>
           </div>
@@ -180,13 +180,13 @@ function RedeployOptions({
             key={c.id}
             onClick={() => setConfirm(c.id)}
             title={c.detail}
-            className="rounded border border-blue-600 px-2 py-1 text-left font-medium text-blue-700 hover:bg-blue-50"
+            className="rounded border border-blue-600 px-2 py-1 text-left font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950"
           >
             {c.label}
           </button>
         ))
       )}
-      {error && <p className="text-red-700">{error}</p>}
+      {error && <p className="text-red-700 dark:text-red-400">{error}</p>}
     </div>
   );
 }

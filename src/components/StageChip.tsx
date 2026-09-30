@@ -1,15 +1,15 @@
 import { type StageCell, type StageStatus } from "@/lib/model";
 
 const STYLES: Record<StageStatus, string> = {
-  success: "border-green-700 bg-green-100 text-green-900",
-  superseded: "border-gray-300 bg-white text-gray-700",
-  failed: "border-red-700 bg-red-100 text-red-900",
+  success: "border-green-700 bg-green-100 text-green-900 dark:border-green-600 dark:bg-green-950 dark:text-green-200",
+  superseded: "border-gray-300 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300",
+  failed: "border-red-700 bg-red-100 text-red-900 dark:border-red-600 dark:bg-red-950 dark:text-red-200",
   running: "border-blue-600 bg-blue-600 text-white",
   waiting: "border-blue-600 bg-blue-600 text-white",
-  queued: "border-blue-300 bg-blue-50 text-blue-900",
-  cancelled: "border-gray-400 bg-gray-100 text-gray-600 line-through",
-  skipped: "border-gray-200 bg-white text-gray-400",
-  none: "border-gray-300 bg-white text-gray-500",
+  queued: "border-blue-300 bg-blue-50 text-blue-900 dark:border-blue-700 dark:bg-blue-950 dark:text-blue-200",
+  cancelled: "border-gray-400 bg-gray-100 text-gray-600 line-through dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  skipped: "border-gray-200 bg-white text-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-600",
+  none: "border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400",
 };
 
 function Icon({ status }: { status: StageStatus }) {
@@ -17,13 +17,13 @@ function Icon({ status }: { status: StageStatus }) {
     case "success":
     case "superseded":
       return (
-        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-green-700" aria-hidden>
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-green-700 dark:fill-green-500" aria-hidden>
           <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06Z" />
         </svg>
       );
     case "failed":
       return (
-        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-red-700" aria-hidden>
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-red-700 dark:fill-red-500" aria-hidden>
           <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm2.53 4.47a.75.75 0 0 0-1.06 0L8 5.94 6.53 4.47a.75.75 0 0 0-1.06 1.06L6.94 7 5.47 8.47a.75.75 0 1 0 1.06 1.06L8 8.06l1.47 1.47a.75.75 0 1 0 1.06-1.06L9.06 7l1.47-1.47a.75.75 0 0 0 0-1.06Z" />
         </svg>
       );
@@ -51,7 +51,7 @@ export function StageChip({
 }) {
   const c: StageCell = cell ?? { status: "none", label: name, tooltip: `${name}: Not run` };
   const className = `flex h-7 w-32 items-center gap-1.5 rounded border px-2 text-xs ${STYLES[c.status]} ${
-    c.current ? "ring-2 ring-green-600 ring-offset-1" : ""
+    c.current ? "ring-2 ring-green-600 ring-offset-1 dark:ring-green-500 dark:ring-offset-gray-950" : ""
   }`;
   const content = (
     <>
@@ -61,14 +61,14 @@ export function StageChip({
   );
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} title={c.tooltip} className={`${className} cursor-pointer hover:brightness-95`}>
+      <button type="button" onClick={onClick} title={c.tooltip} className={`${className} cursor-pointer hover:brightness-95 dark:hover:brightness-125`}>
         {content}
         <span className="ml-auto text-[10px]">▾</span>
       </button>
     );
   }
   return c.url ? (
-    <a href={c.url} target="_blank" rel="noreferrer" title={c.tooltip} className={`${className} hover:brightness-95`}>
+    <a href={c.url} target="_blank" rel="noreferrer" title={c.tooltip} className={`${className} hover:brightness-95 dark:hover:brightness-125`}>
       {content}
     </a>
   ) : (

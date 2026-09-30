@@ -42,7 +42,7 @@ export default async function WorkflowsPage({
       {error ? (
         <ErrorBox error={error} />
       ) : !matrix ? (
-        <p className="px-6 py-10 text-sm text-gray-500">No GitHub Actions workflows in this repository.</p>
+        <p className="px-6 py-10 text-sm text-gray-500 dark:text-gray-400">No GitHub Actions workflows in this repository.</p>
       ) : (
         <>
           <PendingBanner matrix={matrix} />

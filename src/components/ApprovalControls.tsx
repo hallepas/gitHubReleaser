@@ -25,12 +25,12 @@ export function ApprovalControls({
 
   if (!approval.canApprove) {
     return (
-      <span className="text-xs text-gray-500" title={`Reviewers: ${approval.reviewers.join(", ") || "–"}`}>
+      <span className="text-xs text-gray-500 dark:text-gray-400" title={`Reviewers: ${approval.reviewers.join(", ") || "–"}`}>
         Waiting for {approval.reviewers.join(", ") || "a reviewer"}
       </span>
     );
   }
-  if (done) return <span className="text-xs font-medium text-green-700">{done}</span>;
+  if (done) return <span className="text-xs font-medium text-green-700 dark:text-green-400">{done}</span>;
 
   const submit = (state: "approved" | "rejected") =>
     startTransition(async () => {
@@ -66,7 +66,7 @@ export function ApprovalControls({
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submit(confirm)}
           placeholder="Comment (optional)"
-          className="rounded border border-gray-300 px-2 py-1"
+          className="rounded border border-gray-300 bg-transparent px-2 py-1 dark:border-gray-700"
         />
         <div className="flex gap-2">
           <button
@@ -76,11 +76,11 @@ export function ApprovalControls({
           >
             {pending ? "Sending…" : approve ? "Confirm approve" : "Confirm reject"}
           </button>
-          <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100">
+          <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
             Cancel
           </button>
         </div>
-        {error && <span className="text-red-700">{error}</span>}
+        {error && <span className="text-red-700 dark:text-red-400">{error}</span>}
       </div>
     );
   }
@@ -90,10 +90,10 @@ export function ApprovalControls({
       <button onClick={() => setConfirm("approved")} className="rounded bg-green-700 px-2.5 py-0.5 text-xs font-medium text-white hover:bg-green-800">
         Approve
       </button>
-      <button onClick={() => setConfirm("rejected")} className="rounded border border-red-700 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-50">
+      <button onClick={() => setConfirm("rejected")} className="rounded border border-red-700 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-500 dark:text-red-400 dark:hover:bg-red-950">
         Reject
       </button>
-      {error && <span className="text-xs text-red-700">{error}</span>}
+      {error && <span className="text-xs text-red-700 dark:text-red-400">{error}</span>}
     </span>
   );
 }

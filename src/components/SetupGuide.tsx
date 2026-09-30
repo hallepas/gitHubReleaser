@@ -7,7 +7,7 @@ const PAT_URL =
   "https://github.com/settings/tokens/new?scopes=repo,read:org&description=Release%20Dashboard";
 
 function Code({ children }: { children: React.ReactNode }) {
-  return <pre className="mt-2 overflow-x-auto rounded bg-gray-900 px-3 py-2 text-xs text-gray-100">{children}</pre>;
+  return <pre className="mt-2 overflow-x-auto rounded bg-gray-900 px-3 py-2 text-xs text-gray-100 dark:bg-gray-800">{children}</pre>;
 }
 
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
@@ -18,7 +18,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
       </span>
       <div className="min-w-0 flex-1">
         <div className="font-medium">{title}</div>
-        <div className="mt-1 text-sm text-gray-700">{children}</div>
+        <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">{children}</div>
       </div>
     </li>
   );
@@ -35,7 +35,7 @@ function CliSteps({ installed }: { installed: boolean }) {
           Windows (PowerShell):
           <Code>winget install --id GitHub.cli</Code>
           Or download it from{" "}
-          <a className="text-blue-700 underline" href="https://cli.github.com" target="_blank" rel="noreferrer">
+          <a className="text-blue-700 underline dark:text-blue-400" href="https://cli.github.com" target="_blank" rel="noreferrer">
             cli.github.com
           </a>
           . Afterwards <b>restart the dashboard</b> (stop it with Ctrl+C and run <code>npm run dev</code> again) so it finds <code>gh</code>.
@@ -61,7 +61,7 @@ function PatSteps() {
   return (
     <ol className="flex flex-col gap-5">
       <Step n={1} title="Create a personal access token">
-        <a className="text-blue-700 underline" href={PAT_URL} target="_blank" rel="noreferrer">
+        <a className="text-blue-700 underline dark:text-blue-400" href={PAT_URL} target="_blank" rel="noreferrer">
           Create a classic token with <code>repo</code> and <code>read:org</code>
         </a>{" "}
         (pre-filled). For SSO organizations click <b>Configure SSO → Authorize</b> next to the token afterwards.
@@ -114,10 +114,10 @@ export function SetupGuide({ status }: { status: Problem }) {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="rounded-lg border border-amber-300 bg-amber-50 p-5">
-        <h2 className="text-lg font-semibold text-amber-900">⚠ {title}</h2>
-        <p className="mt-1 text-sm text-amber-900">{status.message}</p>
-        <p className="mt-2 text-xs text-amber-800">
+      <div className="rounded-lg border border-amber-300 bg-amber-50 p-5 dark:border-amber-800 dark:bg-amber-950">
+        <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">⚠ {title}</h2>
+        <p className="mt-1 text-sm text-amber-900 dark:text-amber-200">{status.message}</p>
+        <p className="mt-2 text-xs text-amber-800 dark:text-amber-300">
           The dashboard acts as <b>you</b> on GitHub. It uses <code>GITHUB_TOKEN</code> from <code>.env.local</code> if set,
           otherwise the login of the GitHub CLI (<code>gh auth token</code>). You only see and can do what your GitHub
           account is allowed to.
@@ -128,7 +128,7 @@ export function SetupGuide({ status }: { status: Problem }) {
         {status.problem === "tls" ? (
           <TlsSteps />
         ) : status.problem === "network" ? (
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
             Check your internet / VPN connection. If you use GitHub Enterprise Server, set <code>GITHUB_API_URL</code> in{" "}
             <code>.env.local</code>.
           </p>
@@ -136,9 +136,9 @@ export function SetupGuide({ status }: { status: Problem }) {
           <PatSteps />
         ) : (
           <>
-            <h3 className="mb-4 text-sm font-semibold text-gray-500">Option A – GitHub CLI (recommended)</h3>
+            <h3 className="mb-4 text-sm font-semibold text-gray-500 dark:text-gray-400">Option A – GitHub CLI (recommended)</h3>
             <CliSteps installed={status.problem !== "gh-missing"} />
-            <h3 className="mb-4 mt-10 text-sm font-semibold text-gray-500">Option B – Personal access token</h3>
+            <h3 className="mb-4 mt-10 text-sm font-semibold text-gray-500 dark:text-gray-400">Option B – Personal access token</h3>
             <PatSteps />
           </>
         )}
@@ -154,7 +154,7 @@ export function SetupGuide({ status }: { status: Problem }) {
 export function AuthWarnings({ warnings }: { warnings: string[] }) {
   if (!warnings.length) return null;
   return (
-    <div className="border-b border-amber-200 bg-amber-50 px-6 py-2 text-xs text-amber-900">
+    <div className="border-b border-amber-200 bg-amber-50 px-6 py-2 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
       {warnings.map((w) => (
         <div key={w}>
           ⚠ {w}{" "}

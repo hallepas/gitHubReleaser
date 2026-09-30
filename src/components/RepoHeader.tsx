@@ -4,6 +4,7 @@ import { FavoriteStar } from "./FavoriteStar";
 import { RecordVisit } from "./RecordVisit";
 import { RepoPicker } from "./RepoPicker";
 import { SignedInAs } from "./SignedInAs";
+import { ThemeToggle } from "./ThemeToggle";
 import { AuthWarnings } from "./SetupGuide";
 import type { AuthStatus } from "@/lib/auth";
 import { formatDate } from "@/lib/model";
@@ -25,7 +26,7 @@ export function RepoHeader({
   const tab = (id: typeof active, label: string) => (
     <Link
       href={`${base}/${id}`}
-      className={`border-b-2 pb-2 ${active === id ? "border-blue-600 font-medium text-gray-900" : "border-transparent text-gray-600 hover:text-gray-900"}`}
+      className={`border-b-2 pb-2 ${active === id ? "border-blue-600 font-medium text-gray-900 dark:border-blue-500 dark:text-gray-100" : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"}`}
     >
       {label}
     </Link>
@@ -36,7 +37,7 @@ export function RepoHeader({
     <header className="px-6 pt-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <Link href="/" className="text-xs text-gray-500 hover:underline">
+          <Link href="/" className="text-xs text-gray-500 hover:underline dark:text-gray-400">
             ← All repositories
           </Link>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
@@ -50,7 +51,10 @@ export function RepoHeader({
           <div className="w-80">
             <RepoPicker />
           </div>
-          <SignedInAs status={auth} />
+          <div className="flex items-center gap-3">
+            <SignedInAs status={auth} />
+            <ThemeToggle />
+          </div>
           <AutoRefresh renderedAt={formatDate(new Date().toISOString())} />
         </div>
       </div>
@@ -68,7 +72,7 @@ export function RepoHeader({
 export function ErrorBox({ error }: { error: unknown }) {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    <div className="m-6 rounded border border-red-300 bg-red-50 p-4 text-sm text-red-900">
+    <div className="m-6 rounded border border-red-300 bg-red-50 p-4 text-sm text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
       <b>Could not load data.</b>
       <p className="mt-1 whitespace-pre-wrap">{message}</p>
       {/SAML|SSO/i.test(message) && (
