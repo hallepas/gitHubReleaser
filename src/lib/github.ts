@@ -54,6 +54,22 @@ export async function rest<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** Fetches every page of a list endpoint; pages after the first are loaded in parallel. */
+export async function restAll<T>(path: string): Promise<T[]> {
+  const sep = path.includes("?") ? "&" : "?";
+  const first = await fetch(`${API_URL}${path}${sep}per_page=100&page=1`, {
+    headers: headers(),
+    cache: "no-store",
+  });
+  if (!first.ok) throw await toError(first);
+  const items = (await first.json()) as T[];
+  const last = Number(/[?&]page=(\d+)>; rel="last"/.exec(first.headers.get("link") ?? "")?.[1] ?? 1);
+  const rest_ = await Promise.all(
+    Array.from({ length: last - 1 }, (_, i) => rest<T[]>(`${path}${sep}per_page=100&page=${i + 2}`)),
+  );
+  return items.concat(...rest_);
+}
+
 export async function graphql<T>(query: string, variables: Record<string, unknown>): Promise<T> {
   const res = await fetch(GRAPHQL_URL, {
     method: "POST",

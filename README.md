@@ -12,6 +12,8 @@ An Azure DevOps "Releases"-style overview for GitHub: releases (tags/branches) a
 | **Pipelines (Workflow runs)** | GitHub Actions runs + jobs (REST) | Workflow runs | Jobs |
 
 Features:
+- Repository search with type-ahead over every repo your token can access (cached server-side for 10 min).
+- ★ Favorites and "Recently viewed" on the home page (stored in the browser's localStorage).
 - "Pending approval on X stage" banner (environment protection rules).
 - Current live version per environment (ringed chip + summary cards).
 - Approvals that were overtaken by a newer deployment are shown as cancelled.
@@ -44,7 +46,7 @@ export NODE_EXTRA_CA_CERTS=~/.macos-ca.pem
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GITHUB_TOKEN` | `gh auth token` | Token used for GitHub API calls |
-| `DASHBOARD_REPOS` | – | Comma-separated `owner/repo` list on the home page |
+| `DASHBOARD_REPOS` | – | Comma-separated `owner/repo` list shown as "Suggested" on the home page |
 | `DASHBOARD_HIDE_ENVS` | `copilot` | Environments to hide |
 | `DASHBOARD_MAX_ROWS` | `20` | Rows per view |
 | `DASHBOARD_TIMEZONE` | `Europe/Zurich` | Timezone for dates |

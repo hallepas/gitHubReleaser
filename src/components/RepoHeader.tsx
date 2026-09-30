@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { AutoRefresh } from "./AutoRefresh";
+import { FavoriteStar } from "./FavoriteStar";
+import { RecordVisit } from "./RecordVisit";
+import { RepoPicker } from "./RepoPicker";
 import { formatDate } from "@/lib/model";
 
 export function RepoHeader({
@@ -29,14 +32,21 @@ export function RepoHeader({
           <Link href="/" className="text-xs text-gray-500 hover:underline">
             ← All repositories
           </Link>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="flex items-center gap-2 text-2xl font-semibold">
+            <FavoriteStar repo={`${owner}/${repo}`} className="text-2xl" />
             <a href={`https://github.com/${owner}/${repo}`} target="_blank" rel="noreferrer" className="hover:underline">
               {owner}/{repo}
             </a>
           </h1>
         </div>
-        <AutoRefresh renderedAt={formatDate(new Date().toISOString())} />
+        <div className="flex flex-col items-end gap-2">
+          <div className="w-80">
+            <RepoPicker />
+          </div>
+          <AutoRefresh renderedAt={formatDate(new Date().toISOString())} />
+        </div>
       </div>
+      <RecordVisit repo={`${owner}/${repo}`} />
       <nav className="mt-4 flex items-center gap-6 text-sm">
         {tab("deployments", "Releases (Deployments)")}
         {tab("workflows", "Pipelines (Workflow runs)")}
