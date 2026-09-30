@@ -60,6 +60,8 @@ Create a token at *GitHub → Settings → Developer settings → Personal acces
 | Classic | `repo` (add `read:org` so repositories from your organizations appear in search) |
 | Fine-grained | Repository access to the repositories you need, plus: **Metadata** (read), **Contents** (read), **Deployments** (read), **Environments** (read), **Actions** (**read & write**, for approve, re-run and dispatch) |
 
+> **Not sure it worked?** Just start the dashboard. It checks the login on every page. If something is wrong (gh not installed, not logged in, token invalid or expired, or proxy certificate problems) it shows a **step-by-step setup guide** instead of the dashboard, with a **Check again** button. When everything works, the header shows *Signed in as &lt;your login&gt;* and whether the token comes from the GitHub CLI or `.env.local`. A yellow banner warns if a classic token is missing the `repo` or `read:org` scope.
+
 > **Organizations with SAML SSO:** after creating the token, click **Configure SSO → Authorize** next to it for your organization. Otherwise you'll get 403/404 errors. With the GitHub CLI, run `gh auth refresh -h github.com` and complete the SSO step.
 
 ### 3. Install
@@ -152,6 +154,16 @@ jobs:
 - Favorites and recently viewed repos are stored in your browser (`localStorage`).
 
 ## Troubleshooting
+
+The dashboard detects most setup problems itself and shows a guide on the start page:
+
+| Message in the dashboard | Cause | Fix |
+|---|---|---|
+| *Connect the dashboard to GitHub* | No `GITHUB_TOKEN` and `gh` isn't installed (or not on `PATH`) | Install the GitHub CLI and restart, or set `GITHUB_TOKEN` |
+| *Log in to GitHub* | `gh` is installed but not logged in | `gh auth login`, then **Check again** (no restart needed) |
+| *Your GitHub login has expired* | GitHub rejected the token (401) | `gh auth login` again, or create a new PAT and restart |
+| *Your network blocks the connection to GitHub* | TLS interception by a corporate proxy | See [Corporate proxy / TLS errors](#corporate-proxy--tls-errors) |
+| *GitHub is not reachable* | No network / VPN, wrong `GITHUB_API_URL` | Check the connection |
 
 ### Corporate proxy / TLS errors
 
