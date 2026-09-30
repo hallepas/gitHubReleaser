@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { type Matrix, formatDate } from "@/lib/model";
-import { ApprovalChip } from "./ApprovalChip";
+import { StageMenu } from "./StageMenu";
 import { ApprovalControls } from "./ApprovalControls";
-import { StageChip } from "./StageChip";
 
 export function PendingBanner({ matrix }: { matrix: Matrix }) {
   if (!matrix.pending.length) return null;
@@ -31,7 +30,17 @@ export function PendingBanner({ matrix }: { matrix: Matrix }) {
   );
 }
 
-export function MatrixTable({ matrix, firstColumn }: { matrix: Matrix; firstColumn: string }) {
+export function MatrixTable({
+  matrix,
+  firstColumn,
+  owner,
+  repo,
+}: {
+  matrix: Matrix;
+  firstColumn: string;
+  owner: string;
+  repo: string;
+}) {
   if (!matrix.rows.length) {
     return <p className="px-6 py-10 text-sm text-gray-500">Nothing found for this repository yet.</p>;
   }
@@ -79,14 +88,18 @@ export function MatrixTable({ matrix, firstColumn }: { matrix: Matrix; firstColu
             <td className="whitespace-nowrap px-4 py-3 text-gray-700">{formatDate(row.createdAt)}</td>
             <td className="px-4 py-3">
               <div className="flex flex-wrap gap-2">
-                {matrix.columns.map((col) => {
-                  const cell = row.cells[col];
-                  return cell?.approval ? (
-                    <ApprovalChip key={col} name={col} cell={cell} release={row.title} />
-                  ) : (
-                    <StageChip key={col} name={col} cell={cell} />
-                  );
-                })}
+                {matrix.columns.map((col) => (
+                  <StageMenu
+                    key={col}
+                    owner={owner}
+                    repo={repo}
+                    name={col}
+                    cell={row.cells[col]}
+                    release={row.title}
+                    runId={row.runId}
+                    gitRef={row.ref}
+                  />
+                ))}
               </div>
             </td>
           </tr>

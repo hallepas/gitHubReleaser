@@ -33,7 +33,7 @@ export default async function DeploymentsPage({
         <>
           <PendingBanner matrix={matrix} />
           <CurrentVersions matrix={matrix} />
-          <MatrixTable matrix={matrix} firstColumn="Releases" />
+          <MatrixTable matrix={matrix} firstColumn="Releases" owner={owner} repo={repo} />
           <p className="px-6 py-4 text-xs text-gray-500">
             Rows are grouped by tag/branch. A ring marks the version currently live in an environment. Reorder
             columns with <code>?envs=A-UI,UAT-UI,PAV-UI</code>.

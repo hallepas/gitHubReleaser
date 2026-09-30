@@ -27,6 +27,8 @@ export interface StageCell {
   tooltip?: string;
   current?: boolean;
   approval?: Approval;
+  runId?: number;
+  jobId?: number;
 }
 
 export interface MatrixRow {
@@ -38,6 +40,10 @@ export interface MatrixRow {
   refUrl?: string;
   actor?: { login: string; avatarUrl: string };
   createdAt: string;
+  /** Workflow run that produced this row (used for redeploy actions). */
+  runId?: number;
+  /** Branch or tag name to re-run the pipeline on. */
+  ref?: string;
   cells: Record<string, StageCell>;
 }
 
@@ -162,4 +168,21 @@ export function formatDate(iso: string): string {
     second: "2-digit",
     timeZone: process.env.DASHBOARD_TIMEZONE ?? "Europe/Zurich",
   });
+}
+
+export function parseActionsUrl(url?: string): { runId?: number; jobId?: number } {
+  const m = /\/actions\/runs\/(\d+)(?:\/job\/(\d+))?/.exec(url ?? "");
+  return { runId: m ? Number(m[1]) : undefined, jobId: m?.[2] ? Number(m[2]) : undefined };
+}
+
+export interface StageOptions {
+  canWrite: boolean;
+  run?: { id: number; status: string; conclusion: string | null; ageDays: number; url: string; title: string };
+  /** Re-run the deploy job for this stage (and its dependent jobs). */
+  rerunJob?: { jobId: number; jobName: string };
+  /** Re-run failed/cancelled jobs of the run (e.g. after a rejected gate). */
+  rerunFailed?: boolean;
+  /** Start the whole workflow again on this ref. */
+  dispatch?: { workflowId: number; workflowName: string; ref: string };
+  reason?: string;
 }

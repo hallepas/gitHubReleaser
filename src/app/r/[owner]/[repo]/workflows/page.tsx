@@ -42,7 +42,7 @@ export default async function WorkflowsPage({
       ) : (
         <>
           <PendingBanner matrix={matrix} />
-          <MatrixTable matrix={matrix} firstColumn="Runs" />
+          <MatrixTable matrix={matrix} firstColumn="Runs" owner={owner} repo={repo} />
         </>
       )}
     </main>

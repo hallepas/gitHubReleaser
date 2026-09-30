@@ -10,6 +10,7 @@ import {
   formatDate,
   jobStatus,
   orderColumns,
+  parseActionsUrl,
 } from "./model";
 
 const MAX_ROWS = Number(process.env.DASHBOARD_MAX_ROWS ?? 20);
@@ -94,6 +95,7 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
   }
 
   const rows: (MatrixRow & { cells: Record<string, CellWithTime>; latest: string })[] = [];
+  const newestCells = new Set<string>();
   for (const [key, list] of groups) {
     const first = list.reduce((a, b) => (a.createdAt < b.createdAt ? a : b));
     const latest = list.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
@@ -104,13 +106,14 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
       if (cells[env]) continue;
       let status = deploymentStatus(d.latestStatus?.state ?? d.state);
       let note = d.latestStatus?.description ?? d.description ?? "";
-      // An approval that was never given and has since been overtaken by a newer deployment is dead.
-      if ((status === "waiting" || status === "queued") && newestByEnv.get(env) !== d) {
+      if (status === "queued" && newestByEnv.get(env) !== d) {
         status = "cancelled";
-        note = "Never approved – superseded by a newer deployment";
+        note = "Never started – superseded by a newer deployment";
       }
       const when = d.latestStatus?.createdAt ?? d.createdAt;
+      if (newestByEnv.get(env) === d) newestCells.add(env + "\u0000" + key);
       cells[env] = {
+        ...parseActionsUrl(d.latestStatus?.logUrl ?? undefined),
         status,
         label: env,
         at: d.createdAt,
@@ -129,7 +132,10 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
       };
     }
     const shortSha = first.commitOid.slice(0, 7);
+    const runIds = Object.values(cells).map((c) => c.runId ?? 0);
     rows.push({
+      runId: Math.max(0, ...runIds) || undefined,
+      ref: first.ref?.name ?? first.commitOid,
       key,
       title: first.ref?.name ?? shortSha,
       url: first.commit?.url,
@@ -151,21 +157,31 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
   ]);
 
   // Deployments created by GitHub Actions link to their run; use it to find the approvable gate.
+  // Older runs can still be waiting too (GitHub keeps gates open for 30 days), so check all of them.
   const waiting = visible.flatMap((r) =>
     Object.entries(r.cells)
       .filter(([, c]) => c.status === "waiting")
-      .map(([stage, cell]) => ({ row: r, stage, cell, runId: Number(/\/actions\/runs\/(\d+)/.exec(cell.url ?? "")?.[1]) })),
+      .map(([stage, cell]) => ({ row: r, stage, cell })),
   );
-  const runIds = [...new Set(waiting.map((w) => w.runId).filter(Boolean))];
+  const runIds = [...new Set(waiting.map((w) => w.cell.runId ?? 0).filter(Boolean))];
   const approvalsByRun = new Map(
     await Promise.all(
       runIds.map(async (id) => [id, await getApprovals(owner, repo, id, `${repoUrl}/actions/runs/${id}`)] as const),
     ),
   );
-  const pending: PendingApproval[] = waiting.map(({ row, stage, cell, runId }) => {
-    cell.approval = approvalsByRun.get(runId)?.find((a) => a.environment === stage);
-    return { stage, rowTitle: row.title, url: cell.url, approval: cell.approval };
-  });
+  const pending: PendingApproval[] = [];
+  for (const { row, stage, cell } of waiting) {
+    cell.approval = approvalsByRun.get(cell.runId ?? 0)?.find((a) => a.environment === stage);
+    if (!cell.approval && cell.runId) {
+      cell.status = "cancelled";
+      cell.tooltip = `${stage}: No longer waiting (approval expired or run cancelled)`;
+      continue;
+    }
+    // Only the newest release per stage goes into the banner; older ones are approvable via their chip.
+    if (newestCells.has(stage + "\u0000" + row.key)) {
+      pending.push({ stage, rowTitle: row.title, url: cell.url, approval: cell.approval });
+    }
+  }
 
   return { columns, rows: visible, pending };
 }
@@ -265,6 +281,8 @@ export async function getWorkflowMatrix(
       for (const job of jobs) {
         const status = jobStatus(job.status, job.conclusion);
         cells[job.name] = {
+          runId: run.id,
+          jobId: job.id,
           status,
           label: job.name,
           url: job.html_url,
@@ -281,6 +299,8 @@ export async function getWorkflowMatrix(
 
       const row: MatrixRow & { cells: Record<string, CellWithTime> } = {
         key: String(run.id),
+        runId: run.id,
+        ref: run.head_branch ?? run.head_sha,
         title: `${run.display_title} #${run.run_number}`,
         url: run.html_url,
         subtitle: `${run.name} · ${run.event}${run.run_attempt > 1 ? ` · attempt ${run.run_attempt}` : ""}`,
