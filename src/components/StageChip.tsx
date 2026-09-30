@@ -40,7 +40,15 @@ function Icon({ status }: { status: StageStatus }) {
   }
 }
 
-export function StageChip({ cell, name }: { cell?: StageCell; name: string }) {
+export function StageChip({
+  cell,
+  name,
+  onClick,
+}: {
+  cell?: StageCell;
+  name: string;
+  onClick?: () => void;
+}) {
   const c: StageCell = cell ?? { status: "none", label: name, tooltip: `${name}: Not run` };
   const className = `flex h-7 w-32 items-center gap-1.5 rounded border px-2 text-xs ${STYLES[c.status]} ${
     c.current ? "ring-2 ring-green-600 ring-offset-1" : ""
@@ -51,6 +59,14 @@ export function StageChip({ cell, name }: { cell?: StageCell; name: string }) {
       <span className="truncate">{c.label}</span>
     </>
   );
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} title={c.tooltip} className={`${className} cursor-pointer hover:brightness-95`}>
+        {content}
+        <span className="ml-auto text-[10px]">▾</span>
+      </button>
+    );
+  }
   return c.url ? (
     <a href={c.url} target="_blank" rel="noreferrer" title={c.tooltip} className={`${className} hover:brightness-95`}>
       {content}

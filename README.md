@@ -15,6 +15,9 @@ Features:
 - Repository search with type-ahead over every repo your token can access (cached server-side for 10 min).
 - ★ Favorites and "Recently viewed" on the home page (stored in the browser's localStorage).
 - "Pending approval on X stage" banner (environment protection rules).
+- **Approve / Reject** pending stages directly in the dashboard (banner buttons, or click a blue waiting chip).
+  Uses `POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments`; GitHub enforces that you are a required reviewer.
+  Other waiting stages show who has to approve.
 - Current live version per environment (ringed chip + summary cards).
 - Approvals that were overtaken by a newer deployment are shown as cancelled.
 - Columns are auto-ordered by pipeline order; override with `?envs=A-UI,UAT-UI,PAV-UI`.
@@ -27,6 +30,8 @@ cp .env.example .env.local   # set DASHBOARD_REPOS, optionally GITHUB_TOKEN
 npm install
 npm run dev                  # http://localhost:3000
 ```
+
+The server binds to `127.0.0.1` only, because it acts with your GitHub token (including approvals).
 
 Authentication happens server-side only. `GITHUB_TOKEN` is used if set, otherwise the token from `gh auth token`.
 The token needs read access to the repo's deployments, environments and actions (and SSO authorization for SSO-protected orgs).

@@ -1,5 +1,6 @@
 import { graphql, rest } from "./github";
 import {
+  type Approval,
   type Matrix,
   type MatrixRow,
   type PendingApproval,
@@ -149,13 +150,51 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
     ...visible.flatMap((r) => Object.keys(r.cells)),
   ]);
 
-  const pending: PendingApproval[] = visible.flatMap((r) =>
+  // Deployments created by GitHub Actions link to their run; use it to find the approvable gate.
+  const waiting = visible.flatMap((r) =>
     Object.entries(r.cells)
       .filter(([, c]) => c.status === "waiting")
-      .map(([stage, c]) => ({ stage, rowTitle: r.title, url: c.url })),
+      .map(([stage, cell]) => ({ row: r, stage, cell, runId: Number(/\/actions\/runs\/(\d+)/.exec(cell.url ?? "")?.[1]) })),
   );
+  const runIds = [...new Set(waiting.map((w) => w.runId).filter(Boolean))];
+  const approvalsByRun = new Map(
+    await Promise.all(
+      runIds.map(async (id) => [id, await getApprovals(owner, repo, id, `${repoUrl}/actions/runs/${id}`)] as const),
+    ),
+  );
+  const pending: PendingApproval[] = waiting.map(({ row, stage, cell, runId }) => {
+    cell.approval = approvalsByRun.get(runId)?.find((a) => a.environment === stage);
+    return { stage, rowTitle: row.title, url: cell.url, approval: cell.approval };
+  });
 
   return { columns, rows: visible, pending };
+}
+
+interface PendingDeploymentApi {
+  environment: { id: number; name: string };
+  current_user_can_approve: boolean;
+  reviewers: { type: string; reviewer: { login?: string; slug?: string; name?: string } }[];
+}
+
+async function getApprovals(owner: string, repo: string, runId: number, runUrl: string): Promise<Approval[]> {
+  try {
+    const items = await rest<PendingDeploymentApi[]>(
+      `/repos/${owner}/${repo}/actions/runs/${runId}/pending_deployments`,
+    );
+    return items.map((p) => ({
+      owner,
+      repo,
+      runId,
+      runUrl,
+      environmentId: p.environment.id,
+      environment: p.environment.name,
+      canApprove: p.current_user_can_approve,
+      reviewers: p.reviewers.map((r) => r.reviewer.login ?? r.reviewer.slug ?? r.reviewer.name ?? "?"),
+    }));
+  } catch {
+    // Missing actions permission must not break the overview.
+    return [];
+  }
 }
 
 export interface Workflow {
@@ -193,10 +232,6 @@ interface Job {
   html_url: string;
 }
 
-interface PendingDeployment {
-  environment: { name: string };
-  current_user_can_approve: boolean;
-}
 
 export async function getWorkflows(owner: string, repo: string): Promise<Workflow[]> {
   const data = await rest<{ workflows: Workflow[] }>(
@@ -223,9 +258,7 @@ export async function getWorkflowMatrix(
     runs.map(async (run) => {
       const [{ jobs }, pending] = await Promise.all([
         rest<{ jobs: Job[] }>(`/repos/${owner}/${repo}/actions/runs/${run.id}/jobs?per_page=100`),
-        run.status === "waiting"
-          ? rest<PendingDeployment[]>(`/repos/${owner}/${repo}/actions/runs/${run.id}/pending_deployments`)
-          : Promise.resolve([] as PendingDeployment[]),
+        run.status === "waiting" ? getApprovals(owner, repo, run.id, run.html_url) : Promise.resolve([]),
       ]);
 
       const cells: Record<string, CellWithTime> = {};
@@ -257,10 +290,14 @@ export async function getWorkflowMatrix(
         createdAt: run.created_at,
         cells,
       };
+      // Only link a gate to a job cell when the mapping is unambiguous.
+      const waitingJobs = Object.values(cells).filter((c) => c.status === "waiting");
+      if (waitingJobs.length === 1 && pending.length === 1) waitingJobs[0].approval = pending[0];
       const approvals: PendingApproval[] = pending.map((p) => ({
-        stage: p.environment.name,
+        stage: p.environment,
         rowTitle: row.title,
         url: run.html_url,
+        approval: p,
       }));
       return { row, approvals };
     }),

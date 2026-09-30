@@ -9,12 +9,24 @@ export type StageStatus =
   | "skipped"
   | "none";
 
+export interface Approval {
+  owner: string;
+  repo: string;
+  runId: number;
+  runUrl: string;
+  environmentId: number;
+  environment: string;
+  canApprove: boolean;
+  reviewers: string[];
+}
+
 export interface StageCell {
   status: StageStatus;
   label: string;
   url?: string;
   tooltip?: string;
   current?: boolean;
+  approval?: Approval;
 }
 
 export interface MatrixRow {
@@ -33,6 +45,7 @@ export interface PendingApproval {
   stage: string;
   rowTitle: string;
   url?: string;
+  approval?: Approval;
 }
 
 export interface Matrix {

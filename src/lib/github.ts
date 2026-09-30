@@ -83,3 +83,14 @@ export async function graphql<T>(query: string, variables: Record<string, unknow
   if (!body.data) throw new GitHubError("Empty GraphQL response");
   return body.data;
 }
+
+export async function restPost<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers: { ...headers(), "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  if (!res.ok) throw await toError(res);
+  return (await res.json()) as T;
+}

@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { type Matrix, formatDate } from "@/lib/model";
+import { ApprovalChip } from "./ApprovalChip";
+import { ApprovalControls } from "./ApprovalControls";
 import { StageChip } from "./StageChip";
 
 export function PendingBanner({ matrix }: { matrix: Matrix }) {
@@ -22,6 +24,7 @@ export function PendingBanner({ matrix }: { matrix: Matrix }) {
             )}
             .
           </span>
+          {p.approval && <ApprovalControls approval={p.approval} release={p.rowTitle} compact />}
         </div>
       ))}
     </div>
@@ -76,9 +79,14 @@ export function MatrixTable({ matrix, firstColumn }: { matrix: Matrix; firstColu
             <td className="whitespace-nowrap px-4 py-3 text-gray-700">{formatDate(row.createdAt)}</td>
             <td className="px-4 py-3">
               <div className="flex flex-wrap gap-2">
-                {matrix.columns.map((col) => (
-                  <StageChip key={col} name={col} cell={row.cells[col]} />
-                ))}
+                {matrix.columns.map((col) => {
+                  const cell = row.cells[col];
+                  return cell?.approval ? (
+                    <ApprovalChip key={col} name={col} cell={cell} release={row.title} />
+                  ) : (
+                    <StageChip key={col} name={col} cell={cell} />
+                  );
+                })}
               </div>
             </td>
           </tr>
