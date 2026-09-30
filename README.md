@@ -2,12 +2,7 @@
 
 An Azure DevOps "Releases"-style overview for GitHub. Each release (tag, branch or commit) is a row, and each environment is a coloured stage chip. You can approve, reject and redeploy directly from the dashboard.
 
-```
-Releases              Created               Stages
-1.0.2-preview.9       30/09/2026 11:40:22   [✔ app-d] [⏱ app-q ▾] [○ app-p]
-1.0.2-preview.8       30/09/2026 07:23:48   [✔ app-d] [⏱ app-q ▾] [○ app-p]
-1.0.1                 30/07/2026 15:15:25   [✔ app-d] [✖ app-q]   [○ app-p]
-```
+![Releases view: every release is a row, every environment a stage](docs/screenshots/releases.png)
 
 ## Features
 
@@ -26,6 +21,43 @@ Releases              Created               Stages
 - **Auto-refresh**: every 60 seconds.
 
 Approval gates (GitHub environment protection rules) always apply. GitHub decides who may approve or re-run.
+
+## Screenshots
+
+> Repository, user and environment names in the screenshots are anonymized.
+
+### Approve or redeploy from the stage menu
+
+Click any stage chip to approve or reject a pending gate, redeploy an older version, or open the stage in GitHub.
+
+![Stage menu with Approve / Reject](docs/screenshots/stage-menu.png)
+
+### Find any repository
+
+Start typing to search every repository you can access. Star the ones you use often.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/home.png" alt="Home page with favorites and recently viewed repositories"></td>
+    <td width="50%"><img src="docs/screenshots/search.png" alt="Repository search with suggestions as you type"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Favorites, recently viewed and suggested repositories</sub></td>
+    <td align="center"><sub>Suggestions as you type</sub></td>
+  </tr>
+</table>
+
+### Pipelines view
+
+Every workflow run with one chip per job, plus all pending approvals at the top.
+
+![Pipelines view with workflow runs and jobs](docs/screenshots/pipelines.png)
+
+### Built-in setup guide
+
+If the dashboard can't reach GitHub as you (no login, expired token, proxy certificate problems), it tells you exactly what to do.
+
+<p align="center"><img src="docs/screenshots/setup-guide.png" alt="Setup guide shown when the GitHub login is missing" width="70%"></p>
 
 ---
 
