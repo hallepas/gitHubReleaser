@@ -1,5 +1,7 @@
 import { MatrixTable, PendingBanner } from "@/components/MatrixTable";
 import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { SetupGuide } from "@/components/SetupGuide";
+import { getAuthStatus } from "@/lib/auth";
 import { WorkflowPicker } from "@/components/WorkflowPicker";
 import { getLatestWorkflowId, getWorkflowMatrix, getWorkflows, type Workflow } from "@/lib/data";
 import type { Matrix } from "@/lib/model";
@@ -14,6 +16,8 @@ export default async function WorkflowsPage({
   searchParams: Promise<{ workflow?: string }>;
 }) {
   const { owner, repo } = await params;
+  const auth = await getAuthStatus();
+  if (!auth.ok) return <SetupGuide status={auth} />;
   const { workflow } = await searchParams;
 
   let workflows: Workflow[] = [];
@@ -32,7 +36,7 @@ export default async function WorkflowsPage({
 
   return (
     <main>
-      <RepoHeader owner={owner} repo={repo} active="workflows">
+      <RepoHeader owner={owner} repo={repo} active="workflows" auth={auth}>
         {workflows.length > 0 && <WorkflowPicker workflows={workflows} selected={selected} />}
       </RepoHeader>
       {error ? (

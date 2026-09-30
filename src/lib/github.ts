@@ -1,32 +1,55 @@
 import { execFileSync } from "node:child_process";
 
-const API_URL = (process.env.GITHUB_API_URL ?? "https://api.github.com").replace(/\/$/, "");
+export const API_URL = (process.env.GITHUB_API_URL ?? "https://api.github.com").replace(/\/$/, "");
 const GRAPHQL_URL = process.env.GITHUB_GRAPHQL_URL ?? `${API_URL}/graphql`;
 
-let cachedToken: string | undefined;
+export type AuthProblem = "gh-missing" | "gh-not-logged-in" | "no-token";
 
 export class GitHubError extends Error {
   constructor(
     message: string,
     public status?: number,
+    public problem?: AuthProblem,
   ) {
     super(message);
   }
 }
 
-// Falls back to the GitHub CLI token so the POC works without extra setup.
-function getToken(): string {
-  if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN;
-  if (cachedToken) return cachedToken;
+export type TokenSource = "env" | "gh";
+
+// The CLI token is re-read periodically so a later `gh auth login` is picked up without a restart.
+const GH_TOKEN_TTL_MS = 60_000;
+let cachedToken: { value: string; at: number } | undefined;
+
+export function clearTokenCache() {
+  cachedToken = undefined;
+}
+
+export function resolveToken(): { token: string; source: TokenSource } {
+  if (process.env.GITHUB_TOKEN) return { token: process.env.GITHUB_TOKEN, source: "env" };
+  if (cachedToken && Date.now() - cachedToken.at < GH_TOKEN_TTL_MS) {
+    return { token: cachedToken.value, source: "gh" };
+  }
+  let value: string;
   try {
-    cachedToken = execFileSync("gh", ["auth", "token"], { encoding: "utf8" }).trim();
-  } catch {
+    value = execFileSync("gh", ["auth", "token"], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+  } catch (e) {
+    const missing = (e as NodeJS.ErrnoException).code === "ENOENT";
     throw new GitHubError(
-      "No GitHub token found. Set GITHUB_TOKEN in .env.local or log in with `gh auth login`.",
+      missing
+        ? "No GitHub token configured and the GitHub CLI (gh) is not installed."
+        : "The GitHub CLI is installed but not logged in.",
+      undefined,
+      missing ? "gh-missing" : "gh-not-logged-in",
     );
   }
-  if (!cachedToken) throw new GitHubError("GitHub CLI returned an empty token.");
-  return cachedToken;
+  if (!value) throw new GitHubError("The GitHub CLI returned an empty token.", undefined, "gh-not-logged-in");
+  cachedToken = { value, at: Date.now() };
+  return { token: value, source: "gh" };
+}
+
+function getToken(): string {
+  return resolveToken().token;
 }
 
 function headers() {
@@ -45,6 +68,7 @@ async function toError(res: Response): Promise<GitHubError> {
   } catch {
     // keep statusText
   }
+  if (res.status === 401) clearTokenCache();
   return new GitHubError(`GitHub API ${res.status}: ${detail}`, res.status);
 }
 

@@ -3,17 +3,22 @@ import { AutoRefresh } from "./AutoRefresh";
 import { FavoriteStar } from "./FavoriteStar";
 import { RecordVisit } from "./RecordVisit";
 import { RepoPicker } from "./RepoPicker";
+import { SignedInAs } from "./SignedInAs";
+import { AuthWarnings } from "./SetupGuide";
+import type { AuthStatus } from "@/lib/auth";
 import { formatDate } from "@/lib/model";
 
 export function RepoHeader({
   owner,
   repo,
   active,
+  auth,
   children,
 }: {
   owner: string;
   repo: string;
   active: "deployments" | "workflows";
+  auth: Extract<AuthStatus, { ok: true }>;
   children?: React.ReactNode;
 }) {
   const base = `/r/${owner}/${repo}`;
@@ -26,6 +31,8 @@ export function RepoHeader({
     </Link>
   );
   return (
+    <>
+    <AuthWarnings warnings={auth.warnings} />
     <header className="px-6 pt-5">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -43,6 +50,7 @@ export function RepoHeader({
           <div className="w-80">
             <RepoPicker />
           </div>
+          <SignedInAs status={auth} />
           <AutoRefresh renderedAt={formatDate(new Date().toISOString())} />
         </div>
       </div>
@@ -53,6 +61,7 @@ export function RepoHeader({
         <div className="ml-auto pb-2">{children}</div>
       </nav>
     </header>
+    </>
   );
 }
 
