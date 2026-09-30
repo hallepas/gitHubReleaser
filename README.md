@@ -1,67 +1,118 @@
-# Release Dashboard
+<div align="center">
 
-An Azure DevOps "Releases"-style overview for GitHub. Each release (tag, branch or commit) is a row, and each environment is a coloured stage chip. You can approve, reject and redeploy directly from the dashboard.
+# 🚀 Release Dashboard
 
-![Releases view: every release is a row, every environment a stage](docs/screenshots/releases.png)
+**The Azure DevOps "Releases" view, for GitHub.**<br>
+See every release across every environment at a glance, and approve or redeploy without leaving the page.
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Runs locally](https://img.shields.io/badge/runs-locally-2ea44f)
 
-- **Releases view**: GitHub Deployments grouped by tag or branch, with one column per environment. Columns are sorted in pipeline order automatically.
-- **Pipelines view**: GitHub Actions runs of a workflow, with one column per job.
-- **Current version per environment**: summary cards at the top, and a ring around the live version's chip.
-- **Pending approvals**: a banner with **Approve / Reject** buttons.
-- **Stage menu**: click any stage chip to:
-  - approve or reject it. Older releases whose run is still waiting can be approved too.
-  - **Redeploy \<version\> to \<stage\>**: re-run that stage's job and all later jobs. The run must be finished and at most 30 days old.
-  - **Continue pipeline**: re-run failed or rejected jobs.
-  - **Run "\<workflow\>" again for \<tag\>**: start the full pipeline for an older version. The workflow needs a `workflow_dispatch` trigger.
-  - open the stage in GitHub.
-- **Repository search**: suggestions as you type, across every repository you can access.
-- **★ Favorites** and **Recently viewed** on the home page.
-- **Auto-refresh**: every 60 seconds.
+[Features](#-features) · [Quick start](#-quick-start) · [Configuration](#%EF%B8%8F-configuration) · [How it works](#-how-it-works) · [Troubleshooting](#-troubleshooting)
 
-Approval gates (GitHub environment protection rules) always apply. GitHub decides who may approve or re-run.
+<br>
 
-## Screenshots
+<img src="docs/screenshots/releases.png" alt="Releases view: every release is a row, every environment a stage" width="100%">
 
-> Repository, user and environment names in the screenshots are anonymized.
+<sub>Screenshots use anonymized repository, user and environment names.</sub>
 
-### Approve or redeploy from the stage menu
+</div>
 
-Click any stage chip to approve or reject a pending gate, redeploy an older version, or open the stage in GitHub.
+## 🤔 Why?
 
-![Stage menu with Approve / Reject](docs/screenshots/stage-menu.png)
+GitHub has environments, deployments and approval gates, but no single page that answers *"which version is running where, and what's waiting for me?"*. Azure DevOps has one. This dashboard brings it to GitHub:
 
-### Find any repository
+- **One row per release** (tag, branch or commit), **one column per environment**, coloured by status.
+- **Approve, reject and redeploy** right from the overview. No clicking through Actions runs.
+- **Runs on your machine with your own GitHub login.** No server, no extra permissions, nothing to install in your repositories.
 
-Start typing to search every repository you can access. Star the ones you use often.
+## ✨ Features
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/home.png" alt="Home page with favorites and recently viewed repositories"></td>
-    <td width="50%"><img src="docs/screenshots/search.png" alt="Repository search with suggestions as you type"></td>
+    <td width="42%" valign="top">
+      <h3>📋 Releases at a glance</h3>
+      <p>GitHub Deployments grouped by tag or branch, with one column per environment in pipeline order.</p>
+      <ul>
+        <li>Cards show the <b>version currently live</b> in each environment.</li>
+        <li>A ring marks the live version's chip.</li>
+        <li>A banner lists <b>pending approvals</b> with Approve / Reject buttons.</li>
+        <li>Auto-refresh every 60 seconds.</li>
+      </ul>
+    </td>
+    <td width="58%"><img src="docs/screenshots/releases.png" alt="Releases view"></td>
   </tr>
   <tr>
-    <td align="center"><sub>Favorites, recently viewed and suggested repositories</sub></td>
-    <td align="center"><sub>Suggestions as you type</sub></td>
+    <td width="58%"><img src="docs/screenshots/stage-menu.png" alt="Stage menu with Approve and Reject"></td>
+    <td width="42%" valign="top">
+      <h3>✅ Approve & redeploy in place</h3>
+      <p>Click any stage chip to open its menu:</p>
+      <ul>
+        <li><b>Approve / Reject</b> a pending gate, also for older releases that are still waiting.</li>
+        <li><b>Redeploy &lt;version&gt; to &lt;stage&gt;</b>: re-run that stage and everything after it.</li>
+        <li><b>Continue pipeline</b>: re-run failed or rejected jobs.</li>
+        <li><b>Run again for &lt;tag&gt;</b>: start the whole pipeline for an older version.</li>
+        <li><b>Open in GitHub</b>.</li>
+      </ul>
+      <p>Your environment protection rules always apply. GitHub decides who may approve or re-run.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="42%" valign="top">
+      <h3>🔎 Find any repository</h3>
+      <p>Start typing and get suggestions from <b>every repository you can access</b>, even if you don't know its exact name.</p>
+      <ul>
+        <li><b>★ Favorites</b> stay on the home page.</li>
+        <li><b>Recently viewed</b> repositories are remembered.</li>
+        <li><b>Suggested</b> repositories can be preset for your team.</li>
+      </ul>
+    </td>
+    <td width="58%"><img src="docs/screenshots/search.png" alt="Repository search with suggestions"><br><br><img src="docs/screenshots/home.png" alt="Home page with favorites"></td>
+  </tr>
+  <tr>
+    <td width="58%"><img src="docs/screenshots/pipelines.png" alt="Pipelines view"></td>
+    <td width="42%" valign="top">
+      <h3>⚙️ Pipelines view</h3>
+      <p>Every run of a GitHub Actions workflow, with <b>one chip per job</b>. Useful for repositories that don't use deployments.</p>
+      <ul>
+        <li>Pick the workflow from the dropdown. Release/deploy workflows are chosen by default.</li>
+        <li>All pending approvals at the top.</li>
+        <li>The same stage menu as in the Releases view.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="42%" valign="top">
+      <h3>🧭 Built-in setup guide</h3>
+      <p>If the dashboard can't reach GitHub as you, it says <b>what's wrong and exactly what to do</b>:</p>
+      <ul>
+        <li>GitHub CLI not installed or not logged in</li>
+        <li>Token invalid, expired or missing scopes</li>
+        <li>Corporate proxy blocking the connection</li>
+      </ul>
+      <p>Fix it, click <b>Check again</b>, done.</p>
+    </td>
+    <td width="58%"><img src="docs/screenshots/setup-guide.png" alt="Setup guide"></td>
   </tr>
 </table>
 
-### Pipelines view
-
-Every workflow run with one chip per job, plus all pending approvals at the top.
-
-![Pipelines view with workflow runs and jobs](docs/screenshots/pipelines.png)
-
-### Built-in setup guide
-
-If the dashboard can't reach GitHub as you (no login, expired token, proxy certificate problems), it tells you exactly what to do.
-
-<p align="center"><img src="docs/screenshots/setup-guide.png" alt="Setup guide shown when the GitHub login is missing" width="70%"></p>
-
 ---
 
-## Quick start
+## ⚡ Quick start
+
+**TL;DR**, if you already have Node.js 20.9+ and the GitHub CLI:
+
+```bash
+gh auth login
+git clone <this-repo-url> release-dashboard && cd release-dashboard
+npm install
+npm run dev          # → http://localhost:3000
+```
+
+Step by step:
 
 ### 1. Prerequisites
 
@@ -140,7 +191,7 @@ npm start                   # http://localhost:3000
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 All settings go in `.env.local`.
 
@@ -159,7 +210,7 @@ URL options:
 - `?envs=app-d,app-q,app-p`: show only these environments, in this order.
 - `/r/<owner>/<repo>/workflows?workflow=<id>`: choose a workflow in the Pipelines view.
 
-## How it works
+## 🔧 How it works
 
 | View | GitHub API |
 |------|------------|
@@ -179,13 +230,13 @@ jobs:
     needs: deploy-d
 ```
 
-## Security
+## 🔒 Security
 
 - The GitHub token stays on the server and is never sent to the browser.
 - The server listens on **127.0.0.1 only**, because it acts as *you*, including approvals. Don't expose it on a network or share one instance between several people.
 - Favorites and recently viewed repos are stored in your browser (`localStorage`).
 
-## Troubleshooting
+## 🩺 Troubleshooting
 
 The dashboard detects most setup problems itself and shows a guide on the start page:
 
@@ -225,14 +276,13 @@ Then run `npm install` and `npm run dev` again. The API calls to GitHub need the
 
 | Symptom | Fix |
 |---------|-----|
-| "No GitHub token found" | Run `gh auth login`, or set `GITHUB_TOKEN` in `.env.local` |
 | `Resource protected by organization SAML enforcement` | Authorize your token for SSO (see step 2) |
 | Repository not in search | The token has no access to it, or `read:org` is missing. Reload with `/api/repos?refresh` |
 | No Approve button, only "Waiting for …" | You're not a required reviewer for that environment |
 | "Re-run" options missing | You need write access, the run must be finished, and it must be at most 30 days old |
 | Links do nothing inside an IDE's embedded browser | Some embedded browsers block new tabs; use a normal browser |
 
-## Development
+## 🛠️ Development
 
 ```bash
 npm run dev        # dev server with hot reload
