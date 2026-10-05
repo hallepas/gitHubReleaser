@@ -200,3 +200,51 @@ export interface StageOptions {
   dispatch?: { workflowId: number; workflowName: string; ref: string };
   reason?: string;
 }
+
+export type MergeMethod = "merge" | "squash" | "rebase";
+
+export interface PullRequest {
+  owner: string;
+  repo: string;
+  number: number;
+  title: string;
+  url: string;
+  isDraft: boolean;
+  createdAt: string;
+  updatedAt: string;
+  author?: { login: string; avatarUrl: string };
+  baseRef: string;
+  headRef: string;
+  headSha: string;
+  /** Head branch lives in a fork, so it can't be deleted from here. */
+  fromFork: boolean;
+  labels: { name: string; color: string }[];
+  checks: StageStatus;
+  reviewDecision: "APPROVED" | "CHANGES_REQUESTED" | "REVIEW_REQUIRED" | null;
+  viewerReview?: string;
+  mergeable: "MERGEABLE" | "CONFLICTING" | "UNKNOWN";
+  mergeState: string;
+  viewerIsAuthor: boolean;
+  canMerge: boolean;
+  canClose: boolean;
+  canDeleteBranch: boolean;
+  mergeMethods: MergeMethod[];
+  defaultMergeMethod: MergeMethod;
+  deleteBranchOnMerge: boolean;
+}
+
+export function checksStatus(state: string | null | undefined): StageStatus {
+  switch (state) {
+    case "SUCCESS":
+      return "success";
+    case "FAILURE":
+    case "ERROR":
+      return "failed";
+    case "PENDING":
+      return "running";
+    case "EXPECTED":
+      return "queued";
+    default:
+      return "none";
+  }
+}

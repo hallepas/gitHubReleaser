@@ -1,6 +1,6 @@
 import { type StageCell, type StageStatus } from "@/lib/model";
 
-const STYLES: Record<StageStatus, string> = {
+export const STYLES: Record<StageStatus, string> = {
   success: "border-green-700 bg-green-100 text-green-900 dark:border-green-600 dark:bg-green-950 dark:text-green-200",
   superseded: "border-gray-300 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300",
   failed: "border-red-700 bg-red-100 text-red-900 dark:border-red-600 dark:bg-red-950 dark:text-red-200",
@@ -12,7 +12,7 @@ const STYLES: Record<StageStatus, string> = {
   none: "border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400",
 };
 
-function Icon({ status }: { status: StageStatus }) {
+export function Icon({ status }: { status: StageStatus }) {
   switch (status) {
     case "success":
     case "superseded":

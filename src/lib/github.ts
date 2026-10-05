@@ -108,9 +108,17 @@ export async function graphql<T>(query: string, variables: Record<string, unknow
   return body.data;
 }
 
-export async function restPost<T = unknown>(path: string, body?: unknown): Promise<T | undefined> {
+export function restPost<T = unknown>(path: string, body?: unknown): Promise<T | undefined> {
+  return restSend<T>("POST", path, body);
+}
+
+export async function restSend<T = unknown>(
+  method: "POST" | "PUT" | "PATCH" | "DELETE",
+  path: string,
+  body?: unknown,
+): Promise<T | undefined> {
   const res = await fetch(`${API_URL}${path}`, {
-    method: "POST",
+    method,
     headers: { ...headers(), "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: "no-store",

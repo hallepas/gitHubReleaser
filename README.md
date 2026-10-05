@@ -87,6 +87,20 @@ GitHub has environments, deployments and approval gates, but no single page that
   </tr>
   <tr>
     <td width="42%" valign="top">
+      <h3>🔀 Pull requests</h3>
+      <p>All open pull requests of a repository, with checks, review status and mergeability at a glance.</p>
+      <ul>
+        <li><b>Approve</b> or <b>Request changes</b> with a comment.</li>
+        <li><b>Merge</b> with any method the repository allows (merge, squash, rebase), optionally deleting the branch.</li>
+        <li><b>Close</b> without merging, or <b>Close & delete branch</b>.</li>
+        <li>The home page lists every PR <b>waiting for your review</b>, across all repositories.</li>
+      </ul>
+      <p>Branch protection and required reviews still apply. GitHub decides who may merge.</p>
+    </td>
+    <td width="58%"></td>
+  </tr>
+  <tr>
+    <td width="42%" valign="top">
       <h3>🧭 Built-in setup guide</h3>
       <p>If the dashboard can't reach GitHub as you, it says <b>what's wrong and exactly what to do</b>:</p>
       <ul>
@@ -142,7 +156,7 @@ Create a token at *GitHub → Settings → Developer settings → Personal acces
 | Token type | Required permissions |
 |------------|----------------------|
 | Classic | `repo` (add `read:org` so repositories from your organizations appear in search) |
-| Fine-grained | Repository access to the repositories you need, plus: **Metadata** (read), **Contents** (**read & write**, for creating tags), **Deployments** (read), **Environments** (read), **Actions** (**read & write**, for approve, re-run and dispatch) |
+| Fine-grained | Repository access to the repositories you need, plus: **Metadata** (read), **Contents** (**read & write**, for creating tags, merging and deleting branches), **Deployments** (read), **Environments** (read), **Actions** (**read & write**, for approve, re-run and dispatch), **Pull requests** (**read & write**, for reviewing, merging and closing) |
 
 > **Not sure it worked?** Just start the dashboard. It checks the login on every page. If something is wrong (gh not installed, not logged in, token invalid or expired, or proxy certificate problems) it shows a **step-by-step setup guide** instead of the dashboard, with a **Check again** button. When everything works, the header shows *Signed in as &lt;your login&gt;* and whether the token comes from the GitHub CLI or `.env.local`. A yellow banner warns if a classic token is missing the `repo` or `read:org` scope.
 
@@ -201,7 +215,7 @@ All settings go in `.env.local`.
 | `GITHUB_TOKEN` | output of `gh auth token` | Token used for all GitHub API calls |
 | `DASHBOARD_REPOS` | – | Comma-separated `owner/repo` list shown as "Suggested" on the home page |
 | `DASHBOARD_HIDE_ENVS` | `copilot` | Environments to hide (comma-separated) |
-| `DASHBOARD_MAX_ROWS` | `20` | Releases or runs shown per page |
+| `DASHBOARD_MAX_ROWS` | `20` | Releases, runs or pull requests shown per page |
 | `DASHBOARD_TIMEZONE` | `Europe/Zurich` | Timezone for dates |
 | `GITHUB_API_URL` | `https://api.github.com` | REST API (for GitHub Enterprise Server: `https://<host>/api/v3`) |
 | `GITHUB_GRAPHQL_URL` | `$GITHUB_API_URL/graphql` | GraphQL API (for GitHub Enterprise Server: `https://<host>/api/graphql`) |
@@ -222,6 +236,12 @@ URL options:
 | Continue pipeline | `POST actions/runs/{id}/rerun-failed-jobs` |
 | Run again for a tag | `POST actions/workflows/{id}/dispatches` |
 | New tag | GraphQL `refs` (branches, tags), `POST git/refs` |
+| Pull requests | GraphQL `repository.pullRequests`; home page: `search` with `review-requested:@me` |
+| Approve / request changes | `POST pulls/{n}/reviews` |
+| Merge | `PUT pulls/{n}/merge` (with the head SHA you saw, so newer pushes are not merged) |
+| Close | `PATCH pulls/{n}` |
+| Update branch | `PUT pulls/{n}/update-branch` |
+| Delete branch | `DELETE git/refs/heads/{branch}` (never for forks or the default branch) |
 
 For deployments to show up, your workflow jobs must use GitHub environments:
 
@@ -296,16 +316,17 @@ npm run build      # production build
 ```
 src/
   app/                          Next.js App Router
-    page.tsx                    Home page (search, favorites)
-    r/[owner]/[repo]/…          Releases and Pipelines views
+    page.tsx                    Home page (search, favorites, review requests)
+    r/[owner]/[repo]/…          Releases, Pipelines and Pull requests views
     api/repos                   Repository list for search (cached for 10 min)
     api/stage-options           What can be done with a stage (loaded when a chip is clicked)
     api/tag-options             Branches, tags and version suggestions for "New tag"
-    actions.ts                  Server actions: approve, reject, re-run, dispatch, create tag
+    actions.ts                  Server actions: approve, reject, re-run, dispatch, create tag, review/merge/close PRs
   components/                   UI (MatrixTable, StageMenu, RepoPicker, …)
   lib/
     github.ts                   REST and GraphQL client, token handling
     data.ts                     Builds the release/stage matrix
+    pulls.ts                    Open pull requests and review requests
     stageOptions.ts             Re-run and dispatch rules
     tags.ts                     Branches and tags for "New tag"
     versions.ts                 Version parsing and next-version suggestions

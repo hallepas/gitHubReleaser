@@ -21,6 +21,9 @@ function RepoList({ title, repos, empty }: { title: string; repos: string[]; emp
               <Link href={`/r/${r}/workflows`} className="text-xs text-gray-500 hover:underline dark:text-gray-400">
                 Pipelines
               </Link>
+              <Link href={`/r/${r}/pulls`} className="text-xs text-gray-500 hover:underline dark:text-gray-400">
+                Pull requests
+              </Link>
             </li>
           ))}
         </ul>

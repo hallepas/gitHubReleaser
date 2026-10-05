@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { getOpenPullRequestCount } from "@/lib/pulls";
 import { AutoRefresh } from "./AutoRefresh";
 import { FavoriteStar } from "./FavoriteStar";
 import { NewTagButton } from "./NewTag";
@@ -10,6 +12,16 @@ import { AuthWarnings } from "./SetupGuide";
 import type { AuthStatus } from "@/lib/auth";
 import { formatDate } from "@/lib/model";
 
+async function PullCount({ owner, repo }: { owner: string; repo: string }) {
+  const count = await getOpenPullRequestCount(owner, repo).catch(() => 0);
+  if (!count) return null;
+  return (
+    <span className="ml-1.5 rounded-full bg-blue-600 px-1.5 py-0.5 text-xs font-medium text-white dark:bg-blue-500">
+      {count}
+    </span>
+  );
+}
+
 export function RepoHeader({
   owner,
   repo,
@@ -19,17 +31,18 @@ export function RepoHeader({
 }: {
   owner: string;
   repo: string;
-  active: "deployments" | "workflows";
+  active: "deployments" | "workflows" | "pulls";
   auth: Extract<AuthStatus, { ok: true }>;
   children?: React.ReactNode;
 }) {
   const base = `/r/${owner}/${repo}`;
-  const tab = (id: typeof active, label: string) => (
+  const tab = (id: typeof active, label: string, extra?: React.ReactNode) => (
     <Link
       href={`${base}/${id}`}
       className={`border-b-2 pb-2 ${active === id ? "border-blue-600 font-medium text-gray-900 dark:border-blue-500 dark:text-gray-100" : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"}`}
     >
       {label}
+      {extra}
     </Link>
   );
   return (
@@ -66,6 +79,13 @@ export function RepoHeader({
       <nav className="mt-4 flex items-center gap-6 text-sm">
         {tab("deployments", "Releases (Deployments)")}
         {tab("workflows", "Pipelines (Workflow runs)")}
+        {tab(
+          "pulls",
+          "Pull requests",
+          <Suspense>
+            <PullCount owner={owner} repo={repo} />
+          </Suspense>,
+        )}
         <div className="ml-auto pb-2">{children}</div>
       </nav>
     </header>

@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { PullRequestList } from "@/components/PullRequestList";
 import { RepoLists } from "@/components/RepoLists";
 import { RepoPicker } from "@/components/RepoPicker";
 import { AuthWarnings, SetupGuide } from "@/components/SetupGuide";
@@ -5,8 +7,30 @@ import { SignedInAs } from "@/components/SignedInAs";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getAuthStatus } from "@/lib/auth";
 import { getAllRepos } from "@/lib/repos";
+import { getReviewRequests } from "@/lib/pulls";
 
 export const dynamic = "force-dynamic";
+
+async function ReviewRequests() {
+  let pulls;
+  try {
+    pulls = await getReviewRequests();
+  } catch (e) {
+    return (
+      <p className="mt-3 text-sm text-red-700 dark:text-red-400">
+        Could not load review requests: {e instanceof Error ? e.message : String(e)}
+      </p>
+    );
+  }
+  if (!pulls.length) {
+    return <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">Nothing waiting for your review.</p>;
+  }
+  return (
+    <div className="mt-3 overflow-hidden rounded border border-gray-200 dark:border-gray-800 [&>ul]:border-y-0">
+      <PullRequestList pulls={pulls} showRepo />
+    </div>
+  );
+}
 
 export default async function Home() {
   const auth = await getAuthStatus();
@@ -45,6 +69,12 @@ export default async function Home() {
       <div className="mt-8">
         <RepoPicker autoFocus />
       </div>
+      <section className="mt-10">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400">Pull requests waiting for your review</h2>
+        <Suspense fallback={<p className="mt-3 text-sm text-gray-500 dark:text-gray-400">Loading…</p>}>
+          <ReviewRequests />
+        </Suspense>
+      </section>
       <RepoLists suggested={suggested} />
       </div>
     </main>
