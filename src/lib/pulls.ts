@@ -1,5 +1,5 @@
-import { graphql } from "./github";
-import { checksStatus, type MergeMethod, type PullRequest } from "./model";
+import { graphql, restAll } from "./github";
+import { checksStatus, type MergeMethod, type PullFile, type PullRequest } from "./model";
 
 const MAX_ROWS = Number(process.env.DASHBOARD_MAX_ROWS ?? 20);
 
@@ -8,6 +8,7 @@ fragment PR on PullRequest {
   number
   title
   url
+  state
   isDraft
   createdAt
   updatedAt
@@ -41,6 +42,7 @@ interface RawPR {
   number: number;
   title: string;
   url: string;
+  state: PullRequest["state"];
   isDraft: boolean;
   createdAt: string;
   updatedAt: string;
@@ -83,6 +85,7 @@ function toPullRequest(p: RawPR): PullRequest {
     number: p.number,
     title: p.title,
     url: p.url,
+    state: p.state,
     isDraft: p.isDraft,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
@@ -105,6 +108,28 @@ function toPullRequest(p: RawPR): PullRequest {
     defaultMergeMethod: mergeMethods.includes(preferred) ? preferred : (mergeMethods[0] ?? "merge"),
     deleteBranchOnMerge: r.deleteBranchOnMerge,
   };
+}
+
+export async function getPullRequest(
+  owner: string,
+  repo: string,
+  number: number,
+): Promise<{ pr: PullRequest; body: string } | null> {
+  const data = await graphql<{ repository: { pullRequest: (RawPR & { bodyText: string }) | null } | null }>(
+    `query ($owner: String!, $name: String!, $number: Int!) {
+      repository(owner: $owner, name: $name) {
+        pullRequest(number: $number) { ...PR bodyText }
+      }
+    }
+    ${PR_FIELDS}`,
+    { owner, name: repo, number },
+  );
+  const raw = data.repository?.pullRequest;
+  return raw ? { pr: toPullRequest(raw), body: raw.bodyText } : null;
+}
+
+export function getPullRequestFiles(owner: string, repo: string, number: number): Promise<PullFile[]> {
+  return restAll<PullFile>(`/repos/${owner}/${repo}/pulls/${number}/files`);
 }
 
 export async function getOpenPullRequestCount(owner: string, repo: string): Promise<number> {

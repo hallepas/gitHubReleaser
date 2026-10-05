@@ -90,6 +90,7 @@ GitHub has environments, deployments and approval gates, but no single page that
       <h3>🔀 Pull requests</h3>
       <p>All open pull requests of a repository, with checks, review status and mergeability at a glance.</p>
       <ul>
+        <li>Click a PR to see its description and <b>changed files with the full diff</b>, like GitHub's "Files changed" tab.</li>
         <li><b>Approve</b> or <b>Request changes</b> with a comment.</li>
         <li><b>Merge</b> with any method the repository allows (merge, squash, rebase), optionally deleting the branch.</li>
         <li><b>Close</b> without merging, or <b>Close & delete branch</b>.</li>
@@ -237,6 +238,7 @@ URL options:
 | Run again for a tag | `POST actions/workflows/{id}/dispatches` |
 | New tag | GraphQL `refs` (branches, tags), `POST git/refs` |
 | Pull requests | GraphQL `repository.pullRequests`; home page: `search` with `review-requested:@me` |
+| Changed files | REST `pulls/{n}/files` |
 | Approve / request changes | `POST pulls/{n}/reviews` |
 | Merge | `PUT pulls/{n}/merge` (with the head SHA you saw, so newer pushes are not merged) |
 | Close | `PATCH pulls/{n}` |

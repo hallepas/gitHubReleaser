@@ -209,6 +209,7 @@ export interface PullRequest {
   number: number;
   title: string;
   url: string;
+  state: "OPEN" | "CLOSED" | "MERGED";
   isDraft: boolean;
   createdAt: string;
   updatedAt: string;
@@ -231,6 +232,17 @@ export interface PullRequest {
   mergeMethods: MergeMethod[];
   defaultMergeMethod: MergeMethod;
   deleteBranchOnMerge: boolean;
+}
+
+export interface PullFile {
+  filename: string;
+  previous_filename?: string;
+  status: "added" | "removed" | "modified" | "renamed" | "copied" | "changed" | "unchanged";
+  additions: number;
+  deletions: number;
+  /** Missing for binary files and very large diffs. */
+  patch?: string;
+  blob_url: string;
 }
 
 export function checksStatus(state: string | null | undefined): StageStatus {

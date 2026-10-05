@@ -55,7 +55,7 @@ function Review({ pr }: { pr: PullRequest }) {
 }
 
 function Mergeability({ pr }: { pr: PullRequest }) {
-  if (pr.isDraft) return null;
+  if (pr.isDraft || pr.state !== "OPEN") return null;
   if (pr.mergeable === "CONFLICTING") return <Badge tone="red">Conflicts</Badge>;
   switch (pr.mergeState) {
     case "CLEAN":
@@ -90,9 +90,17 @@ export function PullRequestList({ pulls, showRepo = false }: { pulls: PullReques
             )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <a href={pr.url} target="_blank" rel="noreferrer" className="font-medium text-blue-700 hover:underline dark:text-blue-400">
+                <Link
+                  href={`/r/${pr.owner}/${pr.repo}/pulls/${pr.number}`}
+                  className="font-medium text-blue-700 hover:underline dark:text-blue-400"
+                >
                   #{pr.number} {pr.title}
+                </Link>
+                <a href={pr.url} target="_blank" rel="noreferrer" className="text-xs text-gray-500 hover:underline dark:text-gray-400">
+                  GitHub ↗
                 </a>
+                {pr.state === "MERGED" && <Badge tone="green">Merged</Badge>}
+                {pr.state === "CLOSED" && <Badge tone="red">Closed</Badge>}
                 {pr.isDraft && <Badge tone="gray">Draft</Badge>}
                 {pr.labels.map((l) => {
                   const color = /^[0-9a-f]{6}$/i.test(l.color) ? `#${l.color}` : undefined;
@@ -127,7 +135,7 @@ export function PullRequestList({ pulls, showRepo = false }: { pulls: PullReques
               </div>
             </div>
           </div>
-          <PullRequestActions pr={pr} />
+          {pr.state === "OPEN" && <PullRequestActions pr={pr} />}
         </li>
       ))}
     </ul>
