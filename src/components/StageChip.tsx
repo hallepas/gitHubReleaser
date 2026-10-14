@@ -28,7 +28,7 @@ export function Icon({ status }: { status: StageStatus }) {
         </svg>
       );
     case "running":
-      return <span className="h-3 w-3 shrink-0 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden />;
+      return <span data-live className="h-3 w-3 shrink-0 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden />;
     case "waiting":
       return (
         <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-white" aria-hidden>

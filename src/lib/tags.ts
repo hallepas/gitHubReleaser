@@ -1,3 +1,4 @@
+import { getBranchChanges, type ChangePullRequest } from "./changes";
 import { graphql, rest, GitHubError } from "./github";
 import { formatDate } from "./model";
 import { suggestTags, type TagSuggestion } from "./versions";
@@ -21,6 +22,8 @@ export interface TagOptions {
   latestRelease?: string;
   latestPreview?: string;
   suggestions: TagSuggestion[];
+  /** What the default branch contains that its newest tag doesn't. */
+  untagged?: { branch: string; latestTag?: string; commits: number; pullRequests: ChangePullRequest[] };
 }
 
 interface RefNode {
@@ -59,7 +62,10 @@ const TAG_QUERY = /* GraphQL */ `
 `;
 
 export async function getTagOptions(owner: string, repo: string): Promise<TagOptions> {
-  const data = await graphql<TagQuery>(TAG_QUERY, { owner, name: repo });
+  const [data, changes] = await Promise.all([
+    graphql<TagQuery>(TAG_QUERY, { owner, name: repo }),
+    getBranchChanges(owner, repo).catch(() => undefined),
+  ]);
   if (!data.repository) throw new Error(`Repository ${owner}/${repo} not found`);
   const { viewerPermission, defaultBranchRef, branches, tags } = data.repository;
 
@@ -90,6 +96,12 @@ export async function getTagOptions(owner: string, repo: string): Promise<TagOpt
     tags: tagNames,
     totalTags: tags.totalCount,
     ...suggestTags(tagNames),
+    untagged: changes && {
+      branch: changes.branch,
+      latestTag: changes.latestTag,
+      commits: changes.untagged.commits,
+      pullRequests: changes.untagged.pullRequests,
+    },
   };
 }
 

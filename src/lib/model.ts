@@ -71,6 +71,8 @@ export interface RunningRelease {
   jobsDone: number;
   jobsTotal: number;
   startedAt: string;
+  /** The ref already has a row in the deployment matrix. */
+  deployed: boolean;
   actor?: { login: string; avatarUrl: string };
 }
 

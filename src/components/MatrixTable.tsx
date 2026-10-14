@@ -33,7 +33,7 @@ export function PendingBanner({ matrix }: { matrix: Matrix }) {
 export function RunningReleases({ runs }: { runs: RunningRelease[] }) {
   if (!runs.length) return null;
   return (
-    <div className="border-y border-blue-200 bg-blue-50/60 px-6 py-3 text-sm dark:border-blue-900 dark:bg-blue-950/40">
+    <div data-live className="border-y border-blue-200 bg-blue-50/60 px-6 py-3 text-sm dark:border-blue-900 dark:bg-blue-950/40">
       <div className="mb-2 text-xs font-medium uppercase tracking-wide text-blue-900 dark:text-blue-200">In progress</div>
       <div className="flex flex-col gap-2">
         {runs.map((r) => (
@@ -50,7 +50,9 @@ export function RunningReleases({ runs }: { runs: RunningRelease[] }) {
                 {r.currentJob && <> · {r.currentJob}</>} · {r.jobsDone}/{r.jobsTotal} jobs done · started {r.startedAt}
               </div>
             </div>
-            <span className="hidden text-xs text-gray-500 sm:block dark:text-gray-400">Appears below once it deploys to its first stage</span>
+            <span className="hidden text-xs text-gray-500 sm:block dark:text-gray-400">
+              {r.deployed ? "Deploying – see its row below" : "Appears below once it deploys to its first stage"}
+            </span>
           </div>
         ))}
       </div>

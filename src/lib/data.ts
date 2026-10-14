@@ -6,6 +6,7 @@ import {
   type PendingApproval,
   type RunningRelease,
   type StageCell,
+  type StageStatus,
   STATUS_TEXT,
   deploymentStatus,
   formatDate,
@@ -83,16 +84,22 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
     groups.set(key, list);
   }
 
-  // Newest successful deployment per environment = version currently live there.
-  const currentByEnv = new Map<string, GqlDeployment>();
   const newestByEnv = new Map<string, GqlDeployment>();
   for (const d of deployments.nodes) {
-    if (!d.environment) continue;
-    if (!newestByEnv.has(d.environment)) newestByEnv.set(d.environment, d);
-    if (currentByEnv.has(d.environment)) continue;
-    if (deploymentStatus(d.latestStatus?.state ?? d.state) === "success") {
-      currentByEnv.set(d.environment, d);
-    }
+    if (d.environment && !newestByEnv.has(d.environment)) newestByEnv.set(d.environment, d);
+  }
+  const overrides = await getStageOverrides(
+    owner,
+    repo,
+    [...newestByEnv.values()].filter((d) => deploymentStatus(d.latestStatus?.state ?? d.state) === "success"),
+  );
+  const statusOf = (d: GqlDeployment) => overrides.get(d)?.status ?? deploymentStatus(d.latestStatus?.state ?? d.state);
+
+  // Newest successful deployment per environment = version currently live there.
+  const currentByEnv = new Map<string, GqlDeployment>();
+  for (const d of deployments.nodes) {
+    if (!d.environment || currentByEnv.has(d.environment)) continue;
+    if (statusOf(d) === "success") currentByEnv.set(d.environment, d);
   }
 
   const rows: (MatrixRow & { cells: Record<string, CellWithTime>; latest: string })[] = [];
@@ -105,8 +112,8 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
     for (const d of list) {
       const env = d.environment!;
       if (cells[env]) continue;
-      let status = deploymentStatus(d.latestStatus?.state ?? d.state);
-      let note = d.latestStatus?.description ?? d.description ?? "";
+      let status = statusOf(d);
+      let note = overrides.get(d)?.note ?? d.latestStatus?.description ?? d.description ?? "";
       if (status === "queued" && newestByEnv.get(env) !== d) {
         status = "cancelled";
         note = "Never started – superseded by a newer deployment";
@@ -187,6 +194,62 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
   return { columns, rows: visible, pending };
 }
 
+/**
+ * GitHub marks a deployment successful as soon as the job that uses the environment ends.
+ * Release workflows often deploy in later jobs of the same stage (e.g. "Approve d" → "Deploy ArgoCD d" → "E2E d"),
+ * so the stage only counts as done once those jobs are done too.
+ */
+async function getStageOverrides(
+  owner: string,
+  repo: string,
+  deployments: GqlDeployment[],
+): Promise<Map<GqlDeployment, { status: StageStatus; note: string }>> {
+  const result = new Map<GqlDeployment, { status: StageStatus; note: string }>();
+  const byRun = new Map<number, { d: GqlDeployment; jobId: number }[]>();
+  for (const d of deployments) {
+    const { runId, jobId } = parseActionsUrl(d.latestStatus?.logUrl ?? undefined);
+    if (runId && jobId) byRun.set(runId, [...(byRun.get(runId) ?? []), { d, jobId }]);
+  }
+  await Promise.all(
+    [...byRun].map(async ([runId, list]) => {
+      let jobs: Job[];
+      try {
+        ({ jobs } = await rest<{ jobs: Job[] }>(`/repos/${owner}/${repo}/actions/runs/${runId}/jobs?per_page=100`));
+      } catch {
+        return; // Missing actions permission must not break the overview.
+      }
+      for (const { d, jobId } of list) {
+        const envJob = jobs.find((j) => j.id === jobId);
+        if (!envJob) continue;
+        const stage = stageJobs(envJob, jobs, d.environment!);
+        const open = stage.find((j) => j.status !== "completed");
+        const failed = stage.find((j) => ["failure", "timed_out", "startup_failure"].includes(j.conclusion ?? ""));
+        const cancelled = stage.find((j) => j.conclusion === "cancelled");
+        const name = (j: Job) => j.name.split(" / ").pop();
+        if (open) result.set(d, { status: "running", note: `Environment approved, still running: ${name(open)}` });
+        else if (failed) result.set(d, { status: "failed", note: `${name(failed)} failed` });
+        else if (cancelled) result.set(d, { status: "cancelled", note: `${name(cancelled)} was cancelled` });
+      }
+    }),
+  );
+  return result;
+}
+
+/** Jobs that belong to the same stage as the environment job and run after it. */
+function stageJobs(envJob: Job, jobs: Job[], environment: string): Job[] {
+  const start = envJob.started_at ?? envJob.created_at;
+  const later = jobs.filter((j) => j.id !== envJob.id && (j.started_at ?? j.created_at) >= start);
+  // Reusable workflows prefix their jobs, e.g. "Release / Deploy (d, …) / Deploy ArgoCD d".
+  const cut = envJob.name.lastIndexOf(" / ");
+  if (cut > 0) {
+    const group = envJob.name.slice(0, cut + 3);
+    return later.filter((j) => j.name.startsWith(group));
+  }
+  // Otherwise match the stage suffix of the environment ("app-d" → jobs named "… d").
+  const suffix = environment.toLowerCase().split(/[-_ ]/).pop()!;
+  return later.filter((j) => j.name.toLowerCase().split(/[^a-z0-9]+/).includes(suffix));
+}
+
 interface PendingDeploymentApi {
   environment: { id: number; name: string };
   current_user_can_approve: boolean;
@@ -263,8 +326,8 @@ export async function getLatestWorkflowId(owner: string, repo: string): Promise<
 }
 
 /**
- * Runs of the release workflow that are still going but have no deployment yet
- * (e.g. still building), so they are not part of the deployment matrix.
+ * Runs of the release workflow that are still going: either not deployed yet (e.g. still building)
+ * or actively working on a stage. Runs that only wait for an approval are already visible as a gate.
  */
 export async function getRunningReleases(owner: string, repo: string, matrix: Matrix): Promise<RunningRelease[]> {
   const { workflow_runs: runs } = await rest<{ workflow_runs: Run[] }>(
@@ -278,7 +341,7 @@ export async function getRunningReleases(owner: string, repo: string, matrix: Ma
   const active = runs.filter(
     (r) =>
       r.status !== "completed" &&
-      !shownRefs.has(r.head_branch ?? r.head_sha) &&
+      !(r.status === "waiting" && shownRefs.has(r.head_branch ?? r.head_sha)) &&
       (releaseWorkflows.size ? releaseWorkflows.has(r.workflow_id) : /release|deploy|\bcd\b/i.test(r.name)),
   );
 
@@ -297,6 +360,7 @@ export async function getRunningReleases(owner: string, repo: string, matrix: Ma
         jobsDone: jobs.filter((j) => j.status === "completed").length,
         jobsTotal: jobs.length,
         startedAt: formatDate(run.created_at),
+        deployed: shownRefs.has(run.head_branch ?? run.head_sha),
         actor: run.actor ? { login: run.actor.login, avatarUrl: run.actor.avatar_url } : undefined,
       };
     }),

@@ -177,6 +177,29 @@ function TagForm({ owner, repo, options, onClose }: { owner: string; repo: strin
             ⚠ This commit is already tagged {branch.tags.join(", ")}.
           </span>
         )}
+        {options.untagged?.branch === branch.name && options.untagged.commits > 0 && (
+          <div className="mt-1 rounded border border-blue-200 bg-blue-50 px-2 py-1.5 text-xs dark:border-blue-900 dark:bg-blue-950/40">
+            <div className="text-gray-700 dark:text-gray-300">
+              New on {branch.name} since <b className="font-mono">{options.untagged.latestTag ?? "the first commit"}</b> ({options.untagged.commits}{" "}
+              {options.untagged.commits === 1 ? "commit" : "commits"}):
+            </div>
+            {options.untagged.pullRequests.length ? (
+              <ul className="mt-1 flex flex-col gap-0.5">
+                {options.untagged.pullRequests.map((pr) => (
+                  <li key={pr.number} className="truncate" title={pr.title}>
+                    <a href={pr.url} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline dark:text-blue-400">
+                      #{pr.number}
+                    </a>{" "}
+                    {pr.title}
+                    {pr.author && <span className="text-gray-500 dark:text-gray-400"> · {pr.author}</span>}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="mt-1 text-gray-500 dark:text-gray-400">Direct commits only, no pull requests.</div>
+            )}
+          </div>
+        )}
       </label>
 
       <div className="flex flex-col gap-2">

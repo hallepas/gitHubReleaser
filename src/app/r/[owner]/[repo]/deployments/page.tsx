@@ -1,7 +1,9 @@
 import { CurrentVersions, MatrixTable, PendingBanner, RunningReleases } from "@/components/MatrixTable";
+import { UntaggedChanges } from "@/components/ReleaseTimeline";
 import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
+import { getBranchChanges, type BranchChanges } from "@/lib/changes";
 import { getDeploymentMatrix, getRunningReleases } from "@/lib/data";
 import { applyColumnOverride, type Matrix, type RunningRelease } from "@/lib/model";
 
@@ -21,9 +23,14 @@ export default async function DeploymentsPage({
 
   let matrix: Matrix | undefined;
   let running: RunningRelease[] = [];
+  let changes: BranchChanges | undefined;
   let error: unknown;
   try {
-    matrix = await getDeploymentMatrix(owner, repo);
+    [matrix, changes] = await Promise.all([
+      getDeploymentMatrix(owner, repo),
+      // Missing tags or history must not break the overview.
+      getBranchChanges(owner, repo).catch(() => undefined),
+    ]);
     matrix.columns = applyColumnOverride(matrix.columns, envs);
     // Missing Actions access must not break the overview.
     running = await getRunningReleases(owner, repo, matrix).catch(() => []);
@@ -40,6 +47,7 @@ export default async function DeploymentsPage({
         <>
           <PendingBanner matrix={matrix} />
           <RunningReleases runs={running} />
+          <UntaggedChanges changes={changes} />
           <CurrentVersions matrix={matrix} />
           <MatrixTable matrix={matrix} firstColumn="Releases" owner={owner} repo={repo} />
           <p className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">

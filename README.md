@@ -40,7 +40,10 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li>Cards show the <b>version currently live</b> in each environment.</li>
         <li>A ring marks the live version's chip.</li>
         <li>A banner lists <b>pending approvals</b> with Approve / Reject buttons.</li>
-        <li>Auto-refresh every 60 seconds.</li>
+        <li><b>In progress</b> shows the step a running release is on, until the run is done.</li>
+        <li>A stage only turns green when its whole stage is done (e.g. "Deploy ArgoCD d" after the environment gate), not just the job that uses the environment.</li>
+        <li>A hint shows when the default branch has <b>pull requests that are not in any tag yet</b>.</li>
+        <li>Auto-refresh every 60 seconds, every 10 seconds while something is running.</li>
       </ul>
     </td>
     <td width="58%"><img src="docs/screenshots/releases.png" alt="Releases view"></td>
@@ -57,7 +60,7 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li><b>Run again for &lt;tag&gt;</b>: start the whole pipeline for an older version.</li>
         <li><b>Open in GitHub</b>.</li>
       </ul>
-      <p><b>+ New tag</b> creates a tag on any branch to start a release. It shows the latest release and preview, suggests the next version (release or preview, following your tag style) and blocks tags that already exist.</p>
+      <p><b>+ New tag</b> creates a tag on any branch to start a release. It shows the latest release and preview, the pull requests merged since the last tag, suggests the next version (release or preview, following your tag style) and blocks tags that already exist.</p>
       <p>Your environment protection rules always apply. GitHub decides who may approve or re-run.</p>
     </td>
   </tr>
@@ -84,6 +87,20 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li>The same stage menu as in the Releases view.</li>
       </ul>
     </td>
+  </tr>
+  <tr>
+    <td width="42%" valign="top">
+      <h3>🕓 History</h3>
+      <p>A timeline of every tag on the default branch, newest first.</p>
+      <ul>
+        <li>The <b>pull requests</b> each tag added since the previous tag, with a compare link.</li>
+        <li>Changes on the branch that are <b>not tagged yet</b>.</li>
+        <li>Per tag, the status in every environment. A ring marks where it is live.</li>
+        <li>Deployed tags from other branches (e.g. previews) appear in between.</li>
+        <li>Another branch: <code>?branch=release/1.x</code>.</li>
+      </ul>
+    </td>
+    <td width="58%"></td>
   </tr>
   <tr>
     <td width="42%" valign="top">
@@ -230,7 +247,8 @@ URL options:
 
 | View | GitHub API |
 |------|------------|
-| Releases | GraphQL `repository.deployments` and `environments` |
+| Releases | GraphQL `repository.deployments` and `environments`; REST `runs/{id}/jobs` for the stage status |
+| History, untagged changes | GraphQL `ref.history` with `associatedPullRequests`, `refs` (tags) |
 | Pipelines | REST `actions/workflows/{id}/runs`, `runs/{id}/jobs` |
 | Approve / reject | `POST actions/runs/{id}/pending_deployments` |
 | Redeploy stage | `POST actions/jobs/{id}/rerun` |
@@ -319,7 +337,7 @@ npm run build      # production build
 src/
   app/                          Next.js App Router
     page.tsx                    Home page (search, favorites, review requests)
-    r/[owner]/[repo]/…          Releases, Pipelines and Pull requests views
+    r/[owner]/[repo]/…          Releases, History, Pipelines and Pull requests views
     api/repos                   Repository list for search (cached for 10 min)
     api/stage-options           What can be done with a stage (loaded when a chip is clicked)
     api/tag-options             Branches, tags and version suggestions for "New tag"
@@ -328,6 +346,7 @@ src/
   lib/
     github.ts                   REST and GraphQL client, token handling
     data.ts                     Builds the release/stage matrix
+    changes.ts                  Tags on a branch and the pull requests between them
     pulls.ts                    Open pull requests and review requests
     stageOptions.ts             Re-run and dispatch rules
     tags.ts                     Branches and tags for "New tag"

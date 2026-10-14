@@ -31,7 +31,7 @@ export function RepoHeader({
 }: {
   owner: string;
   repo: string;
-  active: "deployments" | "workflows" | "pulls";
+  active: "deployments" | "history" | "workflows" | "pulls";
   auth: Extract<AuthStatus, { ok: true }>;
   children?: React.ReactNode;
 }) {
@@ -78,6 +78,7 @@ export function RepoHeader({
       <RecordVisit repo={`${owner}/${repo}`} />
       <nav className="mt-4 flex items-center gap-6 text-sm">
         {tab("deployments", "Releases (Deployments)")}
+        {tab("history", "History")}
         {tab("workflows", "Pipelines (Workflow runs)")}
         {tab(
           "pulls",
