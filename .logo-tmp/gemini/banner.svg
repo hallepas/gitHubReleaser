@@ -1,0 +1,301 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-labelledby="banner-title banner-desc">
+  <title id="banner-title">Pascal Seiler — Software Developer Banner</title>
+  <desc id="banner-desc">GitHub profile header banner featuring the 3D faceted folded-ribbon PS emblem, Pascal's triangle algorithmic network graph, and Pascal Seiler's name and Software Developer tagline.</desc>
+
+  <defs>
+    <!-- Deep obsidian-indigo background gradient -->
+    <linearGradient id="banner-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814"/>
+      <stop offset="45%" stop-color="#0A1124"/>
+      <stop offset="80%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#070B19"/>
+    </linearGradient>
+
+    <!-- Ambient Nebulas -->
+    <radialGradient id="nebula-left" cx="16%" cy="50%" r="42%">
+      <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.18"/>
+      <stop offset="55%" stop-color="#2563EB" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#050814" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="nebula-right" cx="78%" cy="48%" r="46%">
+      <stop offset="0%" stop-color="#D946EF" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#6366F1" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#050814" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Outer Frame Border Gradient (Ensures high visibility on both Dark & Light GitHub themes) -->
+    <linearGradient id="frame-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.75"/>
+      <stop offset="35%" stop-color="#3B82F6" stop-opacity="0.45"/>
+      <stop offset="70%" stop-color="#A855F7" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#F43F5E" stop-opacity="0.75"/>
+    </linearGradient>
+
+    <!-- Ring & Trace Gradient -->
+    <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="35%" stop-color="#3B82F6"/>
+      <stop offset="68%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
+    </linearGradient>
+
+    <linearGradient id="trace-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="50%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#F472B6"/>
+    </linearGradient>
+
+    <!-- Dedicated Full-Span Gradient for "Seiler" -->
+    <linearGradient id="seiler-grad" gradientUnits="userSpaceOnUse" x1="230" y1="110" x2="440" y2="175">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="48%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#FB7185"/>
+    </linearGradient>
+
+    <!-- P Ribbon Facet Gradients -->
+    <linearGradient id="p-spine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A5F3FC"/>
+      <stop offset="28%" stop-color="#22D3EE"/>
+      <stop offset="70%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="p-arch" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#ECFEFF"/>
+      <stop offset="30%" stop-color="#38BDF8"/>
+      <stop offset="75%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
+    </linearGradient>
+    <linearGradient id="p-bar" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="55%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+
+    <!-- S Ribbon Facet Gradients -->
+    <linearGradient id="s-top" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FAE8FF"/>
+      <stop offset="32%" stop-color="#C084FC"/>
+      <stop offset="75%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="s-mid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0ABFC"/>
+      <stop offset="45%" stop-color="#D946EF"/>
+      <stop offset="85%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#6B21A8"/>
+    </linearGradient>
+    <linearGradient id="s-bot" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F472B6"/>
+      <stop offset="50%" stop-color="#FB7185"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Subtle Dot Grid Pattern -->
+    <pattern id="dot-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="16" cy="16" r="1" fill="#94A3B8" opacity="0.16"/>
+    </pattern>
+
+    <filter id="emblem-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#010309" flood-opacity="0.8"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#38BDF8" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="glow-soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 1. Full Canvas Background & Nebulas -->
+  <rect width="1280" height="320" fill="url(#banner-bg)"/>
+  <rect width="1280" height="320" fill="url(#nebula-left)"/>
+  <rect width="1280" height="320" fill="url(#nebula-right)"/>
+  <rect width="1280" height="320" fill="url(#dot-grid)"/>
+
+  <!-- 2. Background Data Streams & Interconnecting Circuit Bus -->
+  <g opacity="0.34" stroke="url(#trace-grad)" stroke-width="1.5" fill="none">
+    <path d="M 318 62 L 932 62 L 960 90 L 1067 90"/>
+    <path d="M 538 192 L 916 192 L 940 168 L 1011 168" stroke-dasharray="4 4"/>
+    <path d="M 318 268 L 860 268 L 888 240 L 983 240"/>
+    <path d="M 760 268 L 786 294 L 1220 294" opacity="0.5"/>
+  </g>
+
+  <!-- Right-Side Algorithmic Pascal's Triangle Node Network (Centered at x=1095, y=64) -->
+  <g transform="translate(1095, 64)">
+    <!-- Connecting Edges of Pascal's Triangle (Rows 0 to 4) -->
+    <g stroke="url(#trace-grad)" stroke-width="1.5" opacity="0.42">
+      <!-- Outer Edges -->
+      <line x1="0" y1="0" x2="-112" y2="176"/>
+      <line x1="0" y1="0" x2="112" y2="176"/>
+      <!-- Internal Diagonal Edges -->
+      <line x1="-28" y1="44" x2="56" y2="176"/>
+      <line x1="-56" y1="88" x2="0" y2="176"/>
+      <line x1="-84" y1="132" x2="-56" y2="176"/>
+      <line x1="28" y1="44" x2="-56" y2="176"/>
+      <line x1="56" y1="88" x2="0" y2="176"/>
+      <line x1="84" y1="132" x2="56" y2="176"/>
+      <!-- Horizontal Row Bars -->
+      <line x1="-28" y1="44" x2="28" y2="44" stroke-dasharray="3 3"/>
+      <line x1="-56" y1="88" x2="56" y2="88" stroke-dasharray="3 3"/>
+      <line x1="-84" y1="132" x2="84" y2="132" stroke-dasharray="3 3"/>
+      <line x1="-112" y1="176" x2="112" y2="176" stroke-dasharray="3 3"/>
+    </g>
+
+    <!-- Pascal's Triangle Nodes with Binomial Coefficient Badges (1 / 1 1 / 1 2 1 / 1 3 3 1 / 1 4 6 4 1) -->
+    <g filter="url(#glow-soft)">
+      <!-- Row 0: [1] -->
+      <circle cx="0" cy="0" r="8" fill="#091024" stroke="#22D3EE" stroke-width="2.2"/>
+      <!-- Row 1: [1, 1] -->
+      <circle cx="-28" cy="44" r="7.5" fill="#091024" stroke="#38BDF8" stroke-width="2"/>
+      <circle cx="28" cy="44" r="7.5" fill="#091024" stroke="#818CF8" stroke-width="2"/>
+      <!-- Row 2: [1, 2, 1] -->
+      <circle cx="-56" cy="88" r="7.5" fill="#091024" stroke="#38BDF8" stroke-width="2"/>
+      <circle cx="0" cy="88" r="8.5" fill="#091024" stroke="#C084FC" stroke-width="2.4"/>
+      <circle cx="56" cy="88" r="7.5" fill="#091024" stroke="#C084FC" stroke-width="2"/>
+      <!-- Row 3: [1, 3, 3, 1] -->
+      <circle cx="-84" cy="132" r="7.5" fill="#091024" stroke="#22D3EE" stroke-width="2"/>
+      <circle cx="-28" cy="132" r="8" fill="#091024" stroke="#818CF8" stroke-width="2.2"/>
+      <circle cx="28" cy="132" r="8" fill="#091024" stroke="#E879F9" stroke-width="2.2"/>
+      <circle cx="84" cy="132" r="7.5" fill="#091024" stroke="#F472B6" stroke-width="2"/>
+      <!-- Row 4: [1, 4, 6, 4, 1] -->
+      <circle cx="-112" cy="176" r="7.5" fill="#091024" stroke="#22D3EE" stroke-width="2"/>
+      <circle cx="-56" cy="176" r="8" fill="#091024" stroke="#6366F1" stroke-width="2.2"/>
+      <circle cx="0" cy="176" r="9" fill="#091024" stroke="#FB7185" stroke-width="2.5"/>
+      <circle cx="56" cy="176" r="8" fill="#091024" stroke="#F472B6" stroke-width="2.2"/>
+      <circle cx="112" cy="176" r="7.5" fill="#091024" stroke="#F97316" stroke-width="2"/>
+    </g>
+
+    <!-- Binomial Numbers Inside Nodes -->
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="9" font-weight="700" fill="#E2E8F0" text-anchor="middle">
+      <text x="0" y="3">1</text>
+      <text x="-28" y="47">1</text>
+      <text x="28" y="47">1</text>
+      <text x="-56" y="91">1</text>
+      <text x="0" y="91" fill="#FAE8FF">2</text>
+      <text x="56" y="91">1</text>
+      <text x="-84" y="135">1</text>
+      <text x="-28" y="135">3</text>
+      <text x="28" y="135">3</text>
+      <text x="84" y="135">1</text>
+      <text x="-112" y="179">1</text>
+      <text x="-56" y="179">4</text>
+      <text x="0" y="179" fill="#FFE4E6">6</text>
+      <text x="56" y="179">4</text>
+      <text x="112" y="179">1</text>
+    </g>
+
+    <!-- Pascal Formula Caption -->
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="10.5" fill="#64748B" text-anchor="middle" opacity="0.85">
+      <text x="0" y="-16" fill="#38BDF8" letter-spacing="1">PASCAL(n, k)</text>
+      <text x="0" y="204" letter-spacing="1.5">Σ C(n,k) = 2ⁿ</text>
+    </g>
+  </g>
+
+  <!-- 3. Left Emblem: Scaled PS Medallion (Centered at x=186, y=160) -->
+  <g transform="translate(186, 160) scale(0.57) translate(-256, -256)">
+    <!-- Medallion Backdrop -->
+    <circle cx="256" cy="256" r="224" fill="#070C1B" opacity="0.9"/>
+    <circle cx="256" cy="256" r="218" fill="url(#nebula-left)" opacity="0.7"/>
+    <!-- Hexagonal Core Frame -->
+    <polygon points="256,60 426,158 426,354 256,452 86,354 86,158" fill="none" stroke="url(#trace-grad)" stroke-width="2" stroke-dasharray="6 6" opacity="0.4"/>
+
+    <!-- Outer Medallion Rings -->
+    <circle cx="256" cy="256" r="216" fill="none" stroke="url(#ring-grad)" stroke-width="6"/>
+    <circle cx="256" cy="256" r="200" fill="none" stroke="url(#trace-grad)" stroke-width="2.2" stroke-dasharray="32 14 8 14" opacity="0.6"/>
+
+    <!-- Cardinal Ticks -->
+    <g stroke="url(#ring-grad)" stroke-width="4.5" stroke-linecap="round">
+      <line x1="256" y1="34" x2="256" y2="48"/>
+      <line x1="256" y1="464" x2="256" y2="478"/>
+      <line x1="34" y1="256" x2="48" y2="256"/>
+      <line x1="464" y1="256" x2="478" y2="256"/>
+    </g>
+
+    <!-- Dual-Rail Circuit Bus in Lower-Left Pocket -->
+    <g opacity="0.85">
+      <path d="M 136 338 L 174 338 L 194 318 L 236 318" fill="none" stroke="url(#trace-grad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="236" cy="318" r="6" fill="#090E20" stroke="#38BDF8" stroke-width="3.2"/>
+      <path d="M 136 362 L 186 362 L 204 344 L 248 344" fill="none" stroke="url(#trace-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+      <circle cx="248" cy="344" r="5" fill="#090E20" stroke="#C084FC" stroke-width="2.8"/>
+      <circle cx="174" cy="338" r="3.5" fill="#22D3EE"/>
+    </g>
+
+    <!-- 3D Faceted Folded-Ribbon Monogram: PS -->
+    <g filter="url(#emblem-shadow)">
+      <!-- LETTER P -->
+      <polygon points="136,230 192,230 244,250 212,282 136,282" fill="url(#p-bar)"/>
+      <polygon points="136,230 162,230 150,282 136,282" fill="#02050E" opacity="0.48"/>
+      <polygon points="192,230 244,250 232,262 184,230" fill="#02050E" opacity="0.28"/>
+      <polygon points="84,158 116,126 136,178 136,358 108,386 84,386" fill="url(#p-spine)"/>
+      <polygon points="116,126 136,178 136,196 106,136" fill="#02050E" opacity="0.32"/>
+      <polygon points="116,126 212,126 244,158 244,250 192,230 192,178 136,178" fill="url(#p-arch)"/>
+      <polyline points="84,386 84,158 116,126 212,126 244,158 244,250" fill="none" stroke="#E0F2FE" stroke-width="2.5" stroke-linejoin="round" opacity="0.85"/>
+      <line x1="116" y1="126" x2="136" y2="178" stroke="#BAE6FD" stroke-width="2" opacity="0.72"/>
+      <line x1="192" y1="230" x2="244" y2="250" stroke="#7DD3FC" stroke-width="2" opacity="0.65"/>
+      <circle cx="108" cy="356" r="7" fill="#070C1B" stroke="#67E8F9" stroke-width="3.2"/>
+      <circle cx="108" cy="356" r="2.5" fill="#FFFFFF"/>
+
+      <!-- LETTER S -->
+      <polygon points="428,126 428,154 404,178 320,178 320,230 268,250 268,158 300,126" fill="url(#s-top)"/>
+      <polygon points="268,250 268,232 320,214 320,230" fill="#02050E" opacity="0.34"/>
+      <polygon points="376,334 428,354 396,386 268,386 268,358 292,334" fill="url(#s-bot)"/>
+      <polygon points="376,334 428,354 414,368 362,334" fill="#02050E" opacity="0.38"/>
+      <polygon points="320,230 396,230 428,262 428,354 376,334 376,282 300,282 268,250" fill="url(#s-mid)"/>
+      <polyline points="428,126 300,126 268,158 268,250" fill="none" stroke="#FAE8FF" stroke-width="2.5" stroke-linejoin="round" opacity="0.85"/>
+      <polyline points="268,250 320,230 396,230 428,262 428,354" fill="none" stroke="#F5D0FE" stroke-width="2.2" stroke-linejoin="round" opacity="0.78"/>
+      <polyline points="268,386 396,386 428,354" fill="none" stroke="#FDE68A" stroke-width="2.2" stroke-linejoin="round" opacity="0.65"/>
+      <line x1="376" y1="334" x2="428" y2="354" stroke="#FBCFE8" stroke-width="2" opacity="0.65"/>
+      <circle cx="402" cy="152" r="7" fill="#070C1B" stroke="#F5D0FE" stroke-width="3.2"/>
+      <circle cx="402" cy="152" r="2.5" fill="#FFFFFF"/>
+      <circle cx="294" cy="360" r="7" fill="#070C1B" stroke="#FDA4AF" stroke-width="3.2"/>
+      <circle cx="294" cy="360" r="2.5" fill="#FFFFFF"/>
+
+      <!-- Central Nexus Spark -->
+      <polygon points="256,236 265,250 256,264 247,250" fill="url(#trace-grad)" opacity="0.55"/>
+      <polygon points="256,240 262,250 256,260 250,250" fill="#FFFFFF" opacity="0.95"/>
+    </g>
+  </g>
+
+  <!-- 4. Typography & Developer Identity Block (x=362) -->
+  <g transform="translate(362, 0)">
+    <!-- Top Monospace Telemetry Tag -->
+    <g transform="translate(0, 82)">
+      <rect x="0" y="-17" width="322" height="26" rx="13" fill="#0B132B" stroke="url(#trace-grad)" stroke-width="1.2" stroke-opacity="0.65"/>
+      <circle cx="15" cy="-4" r="4" fill="#22D3EE" filter="url(#glow-soft)"/>
+      <text x="28" y="0" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace" font-size="11.5" font-weight="600" fill="#BAE6FD" letter-spacing="1.8">PASCAL.SEILER // PRISM.STREAM</text>
+    </g>
+
+    <!-- Full Name: "Pascal Seiler" with Full-Spectrum Cyan-Violet-Coral Gradient on "Seiler" -->
+    <text x="0" y="168" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif" font-size="76" font-weight="800" letter-spacing="-1.5">
+      <tspan fill="#F8FAFC">Pascal </tspan>
+      <tspan fill="url(#seiler-grad)">Seiler</tspan>
+    </text>
+
+    <!-- Gradient Accent Divider Bar -->
+    <rect x="2" y="190" width="128" height="4" rx="2" fill="url(#ring-grad)"/>
+    <circle cx="142" cy="192" r="3" fill="#22D3EE"/>
+    <circle cx="154" cy="192" r="2.5" fill="#C084FC"/>
+    <circle cx="165" cy="192" r="2" fill="#FB7185"/>
+
+    <!-- Developer Tagline -->
+    <text x="2" y="226" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace" font-size="21" font-weight="700" fill="#F1F5F9" letter-spacing="4">
+      SOFTWARE DEVELOPER
+    </text>
+
+    <!-- Sub-tagline / Engineering Pillars -->
+    <g transform="translate(2, 244)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="12" fill="#94A3B8" letter-spacing="1.2">
+      <text x="0" y="14">
+        <tspan fill="#22D3EE">◆</tspan> SYSTEMS ARCHITECTURE
+        <tspan dx="14" fill="#C084FC">◆</tspan> FULL-STACK ENGINEERING
+        <tspan dx="14" fill="#FB7185">◆</tspan> CLEAN CODE
+      </text>
+    </g>
+  </g>
+
+  <!-- 5. Outer Luminous Frame (Ensures crisp separation on both GitHub Dark & Light themes) -->
+  <rect x="3" y="3" width="1274" height="314" rx="14" fill="none" stroke="url(#frame-grad)" stroke-width="2.5"/>
+</svg>

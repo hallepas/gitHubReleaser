@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Pascal Seiler, Software Developer">
+  <title>Pascal Seiler, Software Developer</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#090d1a"/>
+      <stop offset="1" stop-color="#141a30"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.42"/>
+      <stop offset="0.6" stop-color="#2f81f7" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#2f81f7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ink" gradientUnits="userSpaceOnUse" x1="140" y1="170" x2="350" y2="340">
+      <stop offset="0" stop-color="#5cf2a4"/>
+      <stop offset="0.5" stop-color="#4cc3ff"/>
+      <stop offset="1" stop-color="#b98cff"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.06"/>
+    </pattern>
+    <filter id="neon" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.75 0" result="soft"/>
+      <feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="name" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5cf2a4"/>
+      <stop offset="0.5" stop-color="#4cc3ff"/>
+      <stop offset="1" stop-color="#b98cff"/>
+    </linearGradient>
+    <radialGradient id="glow2" cx="0.2" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#2f81f7" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .mono { font-family: 'JetBrains Mono','SF Mono',Menlo,Consolas,'Liberation Mono',monospace; }
+      .sans { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif; }
+      .cursor { animation: blink 1.1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+    </style>
+  </defs>
+  <rect width="1280" height="320" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="320" rx="24" fill="url(#dots)"/>
+  <rect width="1280" height="320" rx="24" fill="url(#glow2)"/>
+  <g transform="translate(40 30) scale(0.508)">
+    <circle cx="256" cy="256" r="206" fill="none" stroke="url(#ink)" stroke-width="3" stroke-opacity="0.45" stroke-dasharray="1 11" stroke-linecap="round"/>
+    <g transform="translate(-15 0)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="#7d8db5" stroke-width="20">
+        <polyline points="110,206 66,256 110,306"/>
+        <line x1="378" y1="330" x2="404" y2="182"/>
+        <polyline points="432,206 476,256 432,306"/>
+      </g>
+      <g stroke="url(#ink)" stroke-width="30" filter="url(#neon)">
+        <path d="M150 336 V176 H192 A44 44 0 0 1 192 264 H150"/>
+        <path d="M336.6 196 A40 40 0 1 0 302 256 A40 40 0 1 1 267.4 316"/>
+      </g>
+    </g>
+  </g>
+  <line x1="340" y1="80" x2="340" y2="240" stroke="#7d8db5" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="384" y="112" class="mono" font-size="22" fill="#7d8db5">~ $ whoami</text>
+  <text x="380" y="190" class="sans" font-size="78" font-weight="800" fill="#f0f3fa" letter-spacing="-1.5">Pascal <tspan fill="url(#name)">Seiler</tspan></text>
+  <text x="384" y="240" class="mono" font-size="26" fill="#c9d4ee">&lt;<tspan fill="#5cf2a4">SoftwareDeveloper</tspan> /&gt;<tspan fill="#b98cff" dx="10">▋</tspan></text>
+  <!-- git graph -->
+  <g fill="none" stroke-width="4" stroke-linecap="round" opacity="0.85">
+    <line x1="930" y1="200" x2="1232" y2="200" stroke="#4cc3ff" stroke-opacity="0.7"/>
+    <path d="M985 200 C1005 200 1005 140 1030 140 H1110 C1135 140 1135 200 1160 200" stroke="#5cf2a4" stroke-opacity="0.75"/>
+    <path d="M1180 200 C1200 200 1200 256 1222 256" stroke="#b98cff" stroke-opacity="0.6" stroke-dasharray="2 9"/>
+  </g>
+  <g stroke="#0b1020" stroke-width="4">
+    <circle cx="950" cy="200" r="10" fill="#4cc3ff"/>
+    <circle cx="1040" cy="200" r="10" fill="#4cc3ff"/>
+    <circle cx="1045" cy="140" r="10" fill="#5cf2a4"/>
+    <circle cx="1095" cy="140" r="10" fill="#5cf2a4"/>
+    <circle cx="1160" cy="200" r="13" fill="#b98cff"/>
+    <circle cx="1222" cy="200" r="10" fill="#4cc3ff"/>
+  </g>
+  <circle cx="1232" cy="256" r="9" fill="none" stroke="#b98cff" stroke-width="3" stroke-opacity="0.8"/>
+</svg>

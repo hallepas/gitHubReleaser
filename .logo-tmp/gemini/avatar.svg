@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="avatar-title avatar-desc">
+  <title id="avatar-title">Pascal Seiler — Software Developer Logo</title>
+  <desc id="avatar-desc">A 3D faceted folded-ribbon monogram of the letters P and S set inside a glowing geometric circuit medallion with a Pascal's triangle node constellation.</desc>
+
+  <defs>
+    <!-- Full 512x512 square background gradient -->
+    <radialGradient id="bg-radial" cx="50%" cy="46%" r="72%" fx="50%" fy="40%">
+      <stop offset="0%" stop-color="#141E3C"/>
+      <stop offset="52%" stop-color="#090E20"/>
+      <stop offset="100%" stop-color="#040711"/>
+    </radialGradient>
+
+    <!-- Ambient dual-color aura inside medallion -->
+    <radialGradient id="aura-cyan" cx="32%" cy="40%" r="48%">
+      <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.28"/>
+      <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="aura-violet" cx="68%" cy="60%" r="48%">
+      <stop offset="0%" stop-color="#E879F9" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#7C3AED" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Outer Medallion Ring Gradient (strictly within r=220) -->
+    <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="35%" stop-color="#3B82F6"/>
+      <stop offset="68%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#FB7185"/>
+    </linearGradient>
+
+    <linearGradient id="ring-subtle" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#818CF8" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#F472B6" stop-opacity="0.5"/>
+    </linearGradient>
+
+    <!-- P Ribbon Facet Gradients (Electric Cyan -> Azure -> Deep Royal Blue) -->
+    <!-- P1: Vertical Left Pillar -->
+    <linearGradient id="p-spine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A5F3FC"/>
+      <stop offset="28%" stop-color="#22D3EE"/>
+      <stop offset="70%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+
+    <!-- P2: Top & Right Bowl Arch (Brightest Top-Lit Facet) -->
+    <linearGradient id="p-arch" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#ECFEFF"/>
+      <stop offset="30%" stop-color="#38BDF8"/>
+      <stop offset="75%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
+    </linearGradient>
+
+    <!-- P3: Bowl Return Crossbar (Under-Fold Facet) -->
+    <linearGradient id="p-bar" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="55%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+
+    <!-- S Ribbon Facet Gradients (Luminous Lavender-Violet -> Neon Magenta -> Coral-Amber) -->
+    <!-- S1: Top Arch & Upper Left Drop -->
+    <linearGradient id="s-top" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FAE8FF"/>
+      <stop offset="32%" stop-color="#C084FC"/>
+      <stop offset="75%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+
+    <!-- S2: Center Diagonal/Horizontal Spine & Lower Right Drop -->
+    <linearGradient id="s-mid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0ABFC"/>
+      <stop offset="45%" stop-color="#D946EF"/>
+      <stop offset="85%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#6B21A8"/>
+    </linearGradient>
+
+    <!-- S3: Bottom Return Arch -->
+    <linearGradient id="s-bot" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F472B6"/>
+      <stop offset="50%" stop-color="#FB7185"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Interwoven Data Bridge / Circuit Trace Gradient -->
+    <linearGradient id="trace-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="50%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#F472B6"/>
+    </linearGradient>
+
+    <!-- Soft Drop Shadow & Neon Glow for the Main Monogram -->
+    <filter id="monogram-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="11" flood-color="#010309" flood-opacity="0.82"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="14" flood-color="#38BDF8" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="node-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 1. Full 512x512 Square Background -->
+  <rect width="512" height="512" fill="url(#bg-radial)"/>
+
+  <!-- Subtle Corner Tech Grid (Outside Circle Crop, Visible in Full 512x512 Square) -->
+  <g stroke="#1E293B" stroke-width="1" opacity="0.45" fill="none">
+    <path d="M 16 64 L 64 16 M 448 16 L 496 64 M 16 448 L 64 496 M 448 496 L 496 448"/>
+    <path d="M 24 40 L 40 24 M 472 24 L 488 40 M 24 472 L 40 488 M 472 488 L 488 472"/>
+  </g>
+
+  <!-- Ambient Color Auras -->
+  <circle cx="256" cy="256" r="224" fill="url(#aura-cyan)"/>
+  <circle cx="256" cy="256" r="224" fill="url(#aura-violet)"/>
+
+  <!-- 2. Background Pascal's Triangle & Hexagonal Circuit Lattice (Inside r=204) -->
+  <g opacity="0.24" stroke="url(#trace-grad)" stroke-width="1.5" fill="none">
+    <!-- Inscribed Hexagon -->
+    <polygon points="256,60 426,158 426,354 256,452 86,354 86,158" stroke-dasharray="6 6" opacity="0.65"/>
+    <!-- Pascal's Triangle Lattice Lines -->
+    <line x1="256" y1="74" x2="114" y2="396" opacity="0.5"/>
+    <line x1="256" y1="74" x2="398" y2="396" opacity="0.5"/>
+    <line x1="184" y1="100" x2="328" y2="100" opacity="0.55"/>
+    <line x1="184" y1="412" x2="328" y2="412" opacity="0.55"/>
+  </g>
+
+  <!-- Glowing Pascal Triangle Apex & Symmetry Nodes -->
+  <g filter="url(#node-glow)">
+    <!-- Top Apex Node (Row 0 of Pascal's Triangle) -->
+    <circle cx="256" cy="76" r="5.5" fill="#22D3EE"/>
+    <circle cx="256" cy="76" r="2.4" fill="#FFFFFF"/>
+    <!-- Row 1 Nodes -->
+    <circle cx="210" cy="100" r="3.8" fill="#38BDF8" opacity="0.9"/>
+    <circle cx="302" cy="100" r="3.8" fill="#C084FC" opacity="0.9"/>
+    <!-- Bottom Symmetry Nodes -->
+    <circle cx="256" cy="436" r="5.5" fill="#F472B6"/>
+    <circle cx="256" cy="436" r="2.4" fill="#FFFFFF"/>
+    <circle cx="210" cy="412" r="3.8" fill="#38BDF8" opacity="0.9"/>
+    <circle cx="302" cy="412" r="3.8" fill="#FB7185" opacity="0.9"/>
+  </g>
+
+  <!-- 3. Circular Medallion Frame (Strictly inside r=220 for GitHub Circle Crop) -->
+  <!-- Outer subtle rim at r=240 for dark-mode edge definition -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="url(#ring-subtle)" stroke-width="1.5" opacity="0.5"/>
+  <!-- Main high-contrast tech ring at r=216 -->
+  <circle cx="256" cy="256" r="216" fill="none" stroke="url(#ring-grad)" stroke-width="5.5" opacity="0.95"/>
+  <!-- Inner segmented circuit ring at r=200 -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="url(#ring-subtle)" stroke-width="2" stroke-dasharray="32 14 8 14"/>
+
+  <!-- Cardinal Tech Tick Accents on Medallion Ring (within r=222) -->
+  <g stroke="url(#ring-grad)" stroke-width="4" stroke-linecap="round">
+    <line x1="256" y1="34" x2="256" y2="48"/>
+    <line x1="256" y1="464" x2="256" y2="478"/>
+    <line x1="34" y1="256" x2="48" y2="256"/>
+    <line x1="464" y1="256" x2="478" y2="256"/>
+  </g>
+
+  <!-- 4. Precision Dual-Rail Circuit Bus in Lower-Left Pocket (Visible at 96px/460px, preserves P silhouette at 20px) -->
+  <g opacity="0.82">
+    <!-- Upper trace rail -->
+    <path d="M 136 338 L 174 338 L 194 318 L 236 318" fill="none" stroke="url(#trace-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="236" cy="318" r="5.5" fill="#090E20" stroke="#38BDF8" stroke-width="3"/>
+    <!-- Lower trace rail -->
+    <path d="M 136 362 L 186 362 L 204 344 L 248 344" fill="none" stroke="url(#trace-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+    <circle cx="248" cy="344" r="4.5" fill="#090E20" stroke="#C084FC" stroke-width="2.5"/>
+    <circle cx="174" cy="338" r="3" fill="#22D3EE"/>
+  </g>
+
+  <!-- 5. MAIN 3D FACETED FOLDED-RIBBON MONOGRAM: "PS" (52px Ribbon Width, Bold & Balanced) -->
+  <g filter="url(#monogram-shadow)">
+
+    <!-- ==================== LETTER "P" (Left, x: 84..244, y: 126..386) ==================== -->
+    <g id="letter-P">
+      <!-- Plane P3: Bowl Return Crossbar (y: 230..282) -->
+      <polygon points="136,230 192,230 244,250 212,282 136,282" fill="url(#p-bar)"/>
+      <!-- Exact 3D Fold Shadow where P3 tucks behind P1 Spine (strictly inside y: 230..282) -->
+      <polygon points="136,230 162,230 150,282 136,282" fill="#02050E" opacity="0.48"/>
+      <!-- Exact 3D Fold Shadow along right miter (192,230)-(244,250) -->
+      <polygon points="192,230 244,250 232,262 184,230" fill="#02050E" opacity="0.28"/>
+
+      <!-- Plane P1: Vertical Left Pillar (x: 84..136, y: 126..386) -->
+      <polygon points="84,158 116,126 136,178 136,358 108,386 84,386" fill="url(#p-spine)"/>
+      <!-- Exact 3D Fold Shadow under top-left miter (116,126)-(136,178) strictly on P1 -->
+      <polygon points="116,126 136,178 136,196 106,136" fill="#02050E" opacity="0.32"/>
+
+      <!-- Plane P2: Top & Right Bowl Arch (x: 116..244, y: 126..250) -->
+      <polygon points="116,126 212,126 244,158 244,250 192,230 192,178 136,178" fill="url(#p-arch)"/>
+
+      <!-- Crisp Specular Bevel Highlights on P -->
+      <polyline points="84,386 84,158 116,126 212,126 244,158 244,250" fill="none" stroke="#E0F2FE" stroke-width="2.4" stroke-linejoin="round" opacity="0.82"/>
+      <line x1="116" y1="126" x2="136" y2="178" stroke="#BAE6FD" stroke-width="2" opacity="0.72"/>
+      <line x1="192" y1="230" x2="244" y2="250" stroke="#7DD3FC" stroke-width="2" opacity="0.65"/>
+
+      <!-- Circuit Node Port at P Stem Base -->
+      <circle cx="108" cy="356" r="7" fill="#070C1B" stroke="#67E8F9" stroke-width="3.2"/>
+      <circle cx="108" cy="356" r="2.5" fill="#FFFFFF"/>
+    </g>
+
+    <!-- ==================== LETTER "S" (Right, x: 268..428, y: 126..386) ==================== -->
+    <g id="letter-S">
+      <!-- Plane S1: Top Bar & Upper-Left Drop (y: 126..250) -->
+      <polygon points="428,126 428,154 404,178 320,178 320,230 268,250 268,158 300,126" fill="url(#s-top)"/>
+      <!-- Exact 3D Fold Shadow on S1 above middle miter (268,250)-(320,230) -->
+      <polygon points="268,250 268,232 320,214 320,230" fill="#02050E" opacity="0.34"/>
+
+      <!-- Plane S3: Bottom Return Bar & Left Tail (y: 334..386) -->
+      <polygon points="376,334 428,354 396,386 268,386 268,358 292,334" fill="url(#s-bot)"/>
+      <!-- Exact 3D Fold Shadow on S3 below lower-right miter (376,334)-(428,354) -->
+      <polygon points="376,334 428,354 414,368 362,334" fill="#02050E" opacity="0.38"/>
+
+      <!-- Plane S2: Center Spine & Lower-Right Drop (Hero Fold, y: 230..354) -->
+      <polygon points="320,230 396,230 428,262 428,354 376,334 376,282 300,282 268,250" fill="url(#s-mid)"/>
+
+      <!-- Crisp Specular Bevel Highlights on S -->
+      <polyline points="428,126 300,126 268,158 268,250" fill="none" stroke="#FAE8FF" stroke-width="2.4" stroke-linejoin="round" opacity="0.82"/>
+      <polyline points="268,250 320,230 396,230 428,262 428,354" fill="none" stroke="#F5D0FE" stroke-width="2.2" stroke-linejoin="round" opacity="0.78"/>
+      <polyline points="268,386 396,386 428,354" fill="none" stroke="#FDE68A" stroke-width="2.2" stroke-linejoin="round" opacity="0.65"/>
+      <line x1="376" y1="334" x2="428" y2="354" stroke="#FBCFE8" stroke-width="2" opacity="0.65"/>
+
+      <!-- Circuit Node Port at S Top-Right Terminal -->
+      <circle cx="402" cy="152" r="7" fill="#070C1B" stroke="#F5D0FE" stroke-width="3.2"/>
+      <circle cx="402" cy="152" r="2.5" fill="#FFFFFF"/>
+
+      <!-- Circuit Node Port at S Bottom-Left Terminal -->
+      <circle cx="294" cy="360" r="7" fill="#070C1B" stroke="#FDA4AF" stroke-width="3.2"/>
+      <circle cx="294" cy="360" r="2.5" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Central Nexus Diamond Spark between P and S (at x=256, y=250) -->
+    <polygon points="256,236 265,250 256,264 247,250" fill="url(#trace-grad)" opacity="0.55"/>
+    <polygon points="256,240 262,250 256,260 250,250" fill="#FFFFFF" opacity="0.95"/>
+  </g>
+</svg>
