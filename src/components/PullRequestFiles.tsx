@@ -29,10 +29,10 @@ function parsePatch(patch: string): Line[] {
 }
 
 const ROW: Record<Line["kind"], string> = {
-  add: "bg-green-50 dark:bg-green-950/50",
-  del: "bg-red-50 dark:bg-red-950/50",
+  add: "bg-emerald-50 dark:bg-emerald-500/10",
+  del: "bg-rose-50 dark:bg-rose-500/10",
   ctx: "",
-  hunk: "bg-blue-50 text-gray-600 dark:bg-blue-950/40 dark:text-gray-400",
+  hunk: "bg-brand-500/5 text-gray-600 dark:text-gray-400",
   meta: "text-gray-500 dark:text-gray-500",
 };
 
@@ -91,7 +91,7 @@ export function PullRequestFiles({ files }: { files: PullFile[] }) {
     deletions: 0,
   });
   return (
-    <section className="px-6 py-4">
+    <section className="card p-5">
       <h2 className="flex items-center gap-3 text-sm font-medium">
         {files.length} {files.length === 1 ? "file" : "files"} changed <Counts file={total} />
       </h2>
@@ -99,7 +99,7 @@ export function PullRequestFiles({ files }: { files: PullFile[] }) {
         {shown.map((f, i) => (
           <li key={f.filename} className="flex items-center gap-2 py-0.5">
             <Counts file={f} />
-            <a href={`#file-${i}`} className="truncate font-mono text-blue-700 hover:underline dark:text-blue-400">
+            <a href={`#file-${i}`} className="truncate font-mono text-gray-700 hover:text-brand-600 dark:text-gray-300 dark:hover:text-brand-300">
               {f.filename}
             </a>
           </li>
@@ -111,13 +111,13 @@ export function PullRequestFiles({ files }: { files: PullFile[] }) {
             key={f.filename}
             id={`file-${i}`}
             open={f.additions + f.deletions <= COLLAPSE_ABOVE}
-            className="group scroll-mt-4 overflow-hidden rounded border border-gray-200 dark:border-gray-800"
+            className="group scroll-mt-20 overflow-hidden rounded-xl border border-(--line) bg-(--surface-solid)"
           >
-            <summary className="flex cursor-pointer items-center gap-3 border-b border-gray-200 bg-gray-50 px-3 py-2 text-xs dark:border-gray-800 dark:bg-gray-900">
+            <summary className="flex cursor-pointer items-center gap-3 border-b border-(--line) bg-gray-50 px-3 py-2 text-xs dark:bg-white/3">
               <span className="text-gray-500 transition-transform group-open:rotate-90" aria-hidden>
                 ▸
               </span>
-              <span className="rounded border border-gray-300 px-1.5 text-gray-600 dark:border-gray-700 dark:text-gray-400">
+              <span className="rounded-full border border-(--line) px-2 text-[10px] font-medium text-gray-600 dark:text-gray-400">
                 {STATUS[f.status]}
               </span>
               <span className="min-w-0 flex-1 truncate font-mono">

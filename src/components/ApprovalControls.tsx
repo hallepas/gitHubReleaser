@@ -66,17 +66,17 @@ export function ApprovalControls({
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submit(confirm)}
           placeholder="Comment (optional)"
-          className="rounded border border-gray-300 bg-transparent px-2 py-1 dark:border-gray-700"
+          className="input text-xs"
         />
         <div className="flex gap-2">
           <button
             disabled={pending}
             onClick={() => submit(confirm)}
-            className={`rounded px-3 py-1 font-medium text-white disabled:opacity-50 ${approve ? "bg-green-700 hover:bg-green-800" : "bg-red-700 hover:bg-red-800"}`}
+            className={`btn text-white ${approve ? "bg-emerald-600 shadow-sm shadow-emerald-600/30 hover:bg-emerald-700" : "bg-rose-600 hover:bg-rose-700"}`}
           >
             {pending ? "Sending…" : approve ? "Confirm approve" : "Confirm reject"}
           </button>
-          <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
+          <button disabled={pending} onClick={() => setConfirm(undefined)} className="btn btn-outline">
             Cancel
           </button>
         </div>
@@ -86,11 +86,11 @@ export function ApprovalControls({
   }
 
   return (
-    <span className={`inline-flex gap-2 ${compact ? "" : "text-xs"}`}>
-      <button onClick={() => setConfirm("approved")} className="rounded bg-green-700 px-2.5 py-0.5 text-xs font-medium text-white hover:bg-green-800">
+    <span className={`inline-flex items-center gap-2 ${compact ? "" : "text-xs"}`}>
+      <button onClick={() => setConfirm("approved")} className="btn bg-emerald-600 py-1 text-white shadow-sm shadow-emerald-600/30 hover:bg-emerald-700">
         Approve
       </button>
-      <button onClick={() => setConfirm("rejected")} className="rounded border border-red-700 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-500 dark:text-red-400 dark:hover:bg-red-950">
+      <button onClick={() => setConfirm("rejected")} className="btn border border-rose-500/40 py-1 text-rose-600 hover:bg-rose-500/10 dark:text-rose-400">
         Reject
       </button>
       {error && <span className="text-xs text-red-700 dark:text-red-400">{error}</span>}

@@ -23,8 +23,8 @@ const MERGE_WARNING: Record<string, string> = {
   UNSTABLE: "Some checks are not passing.",
 };
 
-const BTN = "rounded px-2.5 py-0.5 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-50";
-const OUTLINE = "border border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800";
+const BTN = "btn py-1";
+const OUTLINE = "btn-outline";
 
 type Mode = "approve" | "changes" | "merge" | "close";
 
@@ -60,7 +60,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
       Cancel
     </button>
   );
-  const panel = "flex w-full flex-col gap-2 text-xs lg:w-80";
+  const panel = "popover flex w-full flex-col gap-2 p-3 text-xs lg:w-80";
 
   if (mode === "approve" || mode === "changes") {
     const approve = mode === "approve";
@@ -80,13 +80,13 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder={approve ? "Comment (optional)" : "What needs to change? (required)"}
-          className="rounded border border-gray-300 bg-transparent px-2 py-1 dark:border-gray-700"
+          className="input text-xs"
         />
         <div className="flex gap-2">
           <button
             disabled={pending || (!approve && !comment.trim())}
             onClick={send}
-            className={`${BTN} text-white ${approve ? "bg-green-700 hover:bg-green-800" : "bg-red-700 hover:bg-red-800"}`}
+            className={`${BTN} text-white ${approve ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-600 hover:bg-rose-700"}`}
           >
             {pending ? "Sending…" : approve ? "Confirm approve" : "Request changes"}
           </button>
@@ -108,7 +108,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value as MergeMethod)}
-            className="rounded border border-gray-300 bg-transparent px-2 py-1 dark:border-gray-700 dark:bg-gray-900"
+            className="input text-xs"
           >
             {pr.mergeMethods.map((m) => (
               <option key={m} value={m}>
@@ -135,7 +135,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
                 "✓ Merged",
               )
             }
-            className={`${BTN} bg-purple-700 text-white hover:bg-purple-800`}
+            className={`${BTN} btn-primary`}
           >
             {pending ? "Merging…" : "Confirm merge"}
           </button>
@@ -169,11 +169,11 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
           Close <b>#{pr.number}</b> without merging?
         </span>
         <div className="flex flex-wrap gap-2">
-          <button disabled={pending} onClick={() => close(false)} className={`${BTN} bg-red-700 text-white hover:bg-red-800`}>
+          <button disabled={pending} onClick={() => close(false)} className={`${BTN} bg-rose-600 text-white hover:bg-rose-700`}>
             {pending ? "Closing…" : "Close"}
           </button>
           {pr.canDeleteBranch && (
-            <button disabled={pending} onClick={() => close(true)} className={`${BTN} bg-red-700 text-white hover:bg-red-800`}>
+            <button disabled={pending} onClick={() => close(true)} className={`${BTN} bg-rose-600 text-white hover:bg-rose-700`}>
               Close & delete branch
             </button>
           )}
@@ -198,7 +198,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
     <div className="flex shrink-0 flex-wrap items-center gap-2">
       {!pr.viewerIsAuthor && (
         <>
-          <button onClick={() => open("approve")} className={`${BTN} bg-green-700 text-white hover:bg-green-800`}>
+          <button onClick={() => open("approve")} className={`${BTN} bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 hover:bg-emerald-700`}>
             Approve
           </button>
           <button onClick={() => open("changes")} className={`${BTN} ${OUTLINE}`}>
@@ -211,7 +211,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
           disabled={!!mergeBlocked}
           title={mergeBlocked}
           onClick={() => open("merge")}
-          className={`${BTN} bg-purple-700 text-white hover:bg-purple-800`}
+          className={`${BTN} btn-primary`}
         >
           Merge
         </button>
@@ -219,7 +219,7 @@ export function PullRequestActions({ pr }: { pr: PullRequest }) {
       {pr.canClose && (
         <button
           onClick={() => open("close")}
-          className={`${BTN} border border-red-700 text-red-700 hover:bg-red-50 dark:border-red-500 dark:text-red-400 dark:hover:bg-red-950`}
+          className={`${BTN} border border-rose-500/40 text-rose-600 hover:bg-rose-500/10 dark:text-rose-400`}
         >
           Close
         </button>

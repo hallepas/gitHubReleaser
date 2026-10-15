@@ -11,7 +11,7 @@ function PullRequestLinks({ pulls, fallback }: { pulls: ChangePullRequest[]; fal
     <ul className="flex flex-col gap-0.5 text-xs">
       {pulls.map((pr) => (
         <li key={pr.number} className="truncate" title={pr.title}>
-          <a href={pr.url} target="_blank" rel="noreferrer" className="font-medium text-blue-700 hover:underline dark:text-blue-400">
+          <a href={pr.url} target="_blank" rel="noreferrer" className="font-medium text-brand-600 hover:underline dark:text-brand-300">
             #{pr.number}
           </a>{" "}
           <span className="text-gray-800 dark:text-gray-200">{pr.title}</span>
@@ -29,13 +29,19 @@ export function UntaggedChanges({ changes }: { changes?: BranchChanges }) {
   const { branch, latestTag, untagged, repoUrl } = changes;
   if (!untagged.commits) {
     return (
-      <div className="px-6 pt-2 text-xs text-gray-600 dark:text-gray-400">
-        <span className="font-mono">⑂ {branch}</span> is at tag <b className="font-mono">{latestTag}</b>. Nothing new to release.
+      <div className="inline-flex items-center gap-2 self-start rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-800 dark:text-emerald-200">
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-emerald-500" aria-hidden>
+          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06Z" />
+        </svg>
+        <span>
+          <span className="font-mono">{branch}</span> is at tag <b className="font-mono">{latestTag}</b> – nothing new to release.
+        </span>
       </div>
     );
   }
   return (
-    <div className="mx-6 mt-3 rounded border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm dark:border-amber-800 dark:bg-amber-950/40">
+    <div className="card relative overflow-hidden border-amber-400/40 p-4 pl-5 text-sm">
+      <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-amber-400 to-orange-500" />
       <div>
         <span className="font-mono">⑂ {branch}</span> has <b>{untagged.commits}</b> {untagged.commits === 1 ? "commit" : "commits"} not in
         any tag yet{latestTag ? (
@@ -119,15 +125,15 @@ export function ReleaseTimeline({
   const untagged = changes?.untagged;
 
   const dot = (className: string) => (
-    <span className={`absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-white dark:border-gray-950 ${className}`} />
+    <span className={`absolute -left-[7px] top-1.5 h-3 w-3 rounded-full border-2 border-(--surface-solid) shadow-[0_0_0_3px] ${className}`} />
   );
 
   return (
-    <div className="px-6 py-4">
-      <ol className="relative ml-2 border-l border-gray-200 dark:border-gray-800">
+    <div className="card px-6 py-5">
+      <ol className="stagger relative ml-2 border-l-2 border-(--line)">
         {changes && untagged && untagged.commits > 0 && (
           <li className="relative pb-6 pl-6">
-            {dot("bg-amber-500")}
+            {dot("bg-amber-500 shadow-amber-500/25")}
             <div className="flex flex-wrap items-baseline gap-x-3">
               <span className="font-semibold">Not tagged yet</span>
               <span className="font-mono text-xs text-gray-600 dark:text-gray-400">⑂ {changes.branch}</span>
@@ -149,22 +155,20 @@ export function ReleaseTimeline({
           const run = running.find((r) => r.ref === title);
           return (
             <li key={e.key} className="relative pb-6 pl-6">
-              {dot(seg ? (preview ? "bg-violet-500" : "bg-blue-600") : "bg-gray-400")}
+              {dot(seg ? (preview ? "bg-violet-500 shadow-violet-500/25" : "bg-brand-500 shadow-brand-500/25") : "bg-gray-400 shadow-gray-400/20")}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                {e.actor && <img src={e.actor.avatarUrl} alt={e.actor.login} title={e.actor.login} className="h-5 w-5 rounded-full" />}
+                {e.actor && <img src={e.actor.avatarUrl} alt={e.actor.login} title={e.actor.login} className="h-6 w-6 rounded-full ring-2 ring-(--line)" />}
                 <a
                   href={repoUrl && seg ? `${repoUrl}/tree/${encodeURIComponent(title)}` : e.row?.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-mono font-semibold text-blue-700 hover:underline dark:text-blue-400"
+                  className="font-mono text-base font-semibold text-gray-900 transition-colors hover:text-brand-600 dark:text-gray-100 dark:hover:text-brand-300"
                 >
                   {title}
                 </a>
                 <span
-                  className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
-                    preview
-                      ? "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300"
-                      : "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                    preview ? "bg-violet-500/10 text-violet-700 dark:text-violet-300" : "bg-brand-500/10 text-brand-700 dark:text-brand-300"
                   }`}
                 >
                   {preview ? "Preview" : "Release"}
@@ -186,7 +190,7 @@ export function ReleaseTimeline({
                     href={`${repoUrl}/compare/${encodeURIComponent(e.previousTag)}...${encodeURIComponent(seg.tag!)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-blue-700 hover:underline dark:text-blue-400"
+                    className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-300"
                   >
                     Changes since {e.previousTag} ({seg.commits} {seg.commits === 1 ? "commit" : "commits"})
                   </a>
@@ -204,7 +208,7 @@ export function ReleaseTimeline({
                   ))}
                 </div>
               ) : run ? (
-                <a href={run.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs text-blue-700 hover:underline dark:text-blue-400">
+                <a href={run.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:underline dark:text-blue-300">
                   <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />
                   Release run in progress ({run.jobsDone}/{run.jobsTotal} jobs)
                 </a>

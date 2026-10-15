@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { RepoSummary } from "@/lib/repos";
 import { useFavorites } from "@/lib/favorites";
 import { FavoriteStar } from "./FavoriteStar";
+import { SearchIcon } from "./icons";
+import { RepoAvatar } from "./RepoAvatar";
 
 const MAX_RESULTS = 12;
 
@@ -21,7 +23,24 @@ function score(repo: RepoSummary, tokens: string[]): number {
   return 10;
 }
 
-export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
+const noop = () => () => {};
+
+function useIsMac() {
+  return useSyncExternalStore(noop, () => /Mac|iPhone|iPad/.test(navigator.platform), () => true);
+}
+
+export function ShortcutHint({ className = "" }: { className?: string }) {
+  const mac = useIsMac();
+  return (
+    <kbd
+      className={`inline-flex items-center gap-0.5 rounded-md border border-(--line) bg-(--surface-solid) px-1.5 py-0.5 font-sans text-[10px] font-medium text-gray-500 shadow-sm dark:text-gray-400 ${className}`}
+    >
+      {mac ? "⌘" : "Ctrl"} K
+    </kbd>
+  );
+}
+
+export function RepoPicker({ autoFocus = false, size = "md" }: { autoFocus?: boolean; size?: "md" | "lg" }) {
   const router = useRouter();
   const { isFavorite } = useFavorites();
   const [repos, setRepos] = useState<RepoSummary[] | null>(null);
@@ -30,6 +49,22 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // ⌘K / Ctrl+K or "/" focuses the search from anywhere on the page.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const typing = target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+      if (((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") || (e.key === "/" && !typing)) {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,9 +119,17 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
     }
   };
 
+  const large = size === "lg";
+
   return (
-    <div className="relative">
+    <div className="group/picker relative">
+      <SearchIcon
+        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-gray-400 transition-colors group-focus-within/picker:text-brand-500 ${
+          large ? "left-4 h-5 w-5" : "left-3 h-4 w-4"
+        }`}
+      />
       <input
+        ref={inputRef}
         autoFocus={autoFocus}
         value={query}
         onChange={(e) => {
@@ -101,19 +144,26 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
         role="combobox"
         aria-expanded={open}
         aria-controls="repo-results"
-        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:focus:border-blue-500"
+        className={`input ${large ? "h-14 rounded-2xl pl-12 pr-16 text-base shadow-lg shadow-brand-900/5" : "h-9 pl-9 pr-14 text-sm"}`}
       />
+      <ShortcutHint className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${large ? "right-4" : "right-2.5"}`} />
       {open && (
         <ul
           id="repo-results"
           ref={listRef}
           role="listbox"
-          className="absolute z-10 mt-1 max-h-96 w-full overflow-auto rounded border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/50"
+          className="popover scrollbar-thin absolute z-40 mt-2 max-h-[26rem] w-full min-w-80 overflow-auto p-1.5"
         >
           {error && <li className="px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</li>}
-          {!error && !repos && <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">Loading repositories…</li>}
+          {!error && !repos && (
+            <li className="flex flex-col gap-2 p-2">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className="skeleton h-8" />
+              ))}
+            </li>
+          )}
           {repos && results.length === 0 && (
-            <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">No repository matches “{query}”.</li>
+            <li className="px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400">No repository matches “{query}”.</li>
           )}
           {results.map((r, i) => (
             <li
@@ -125,20 +175,28 @@ export function RepoPicker({ autoFocus = false }: { autoFocus?: boolean }) {
                 e.preventDefault();
                 go(r.fullName);
               }}
-              className={`flex cursor-pointer items-start gap-2 px-3 py-2 text-sm ${i === active ? "bg-blue-50 dark:bg-blue-950" : ""}`}
+              className={`flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-colors ${
+                i === active ? "bg-brand-500/10 dark:bg-brand-400/15" : ""
+              }`}
             >
-              <FavoriteStar repo={r.fullName} />
+              <RepoAvatar repo={r.fullName} size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate">
                     <span className="text-gray-500 dark:text-gray-400">{r.fullName.split("/")[0]}/</span>
                     <span className="font-medium">{r.fullName.split("/")[1]}</span>
                   </span>
-                  {r.private && <span className="rounded border px-1 text-[10px] text-gray-500 dark:text-gray-400">private</span>}
-                  {r.archived && <span className="rounded border px-1 text-[10px] text-amber-700 dark:text-amber-400">archived</span>}
+                  {r.private && (
+                    <span className="rounded-full border border-(--line) px-1.5 text-[10px] text-gray-500 dark:text-gray-400">private</span>
+                  )}
+                  {r.archived && (
+                    <span className="rounded-full bg-amber-500/10 px-1.5 text-[10px] text-amber-700 dark:text-amber-400">archived</span>
+                  )}
                 </div>
                 {r.description && <div className="truncate text-xs text-gray-500 dark:text-gray-400">{r.description}</div>}
               </div>
+              <FavoriteStar repo={r.fullName} />
+              {i === active && <span className="text-[10px] text-gray-400">↵</span>}
             </li>
           ))}
         </ul>

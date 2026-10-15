@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PullRequestFiles } from "@/components/PullRequestFiles";
 import { PullRequestList } from "@/components/PullRequestList";
-import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { ErrorBox } from "@/components/RepoHeader";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
 import type { PullFile } from "@/lib/model";
@@ -31,28 +31,28 @@ export default async function PullRequestPage({
   }
 
   return (
-    <main>
-      <RepoHeader owner={owner} repo={repo} active="pulls" auth={auth} />
-      <div className="px-6 pb-3 pt-4">
-        <Link href={`/r/${owner}/${repo}/pulls`} className="text-xs text-gray-500 hover:underline dark:text-gray-400">
-          ← All pull requests
-        </Link>
-      </div>
+    <>
+      <Link
+        href={`/r/${owner}/${repo}/pulls`}
+        className="inline-flex items-center gap-1 self-start text-xs font-medium text-gray-500 transition-colors hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-300"
+      >
+        ← All pull requests
+      </Link>
       {error ? (
         <ErrorBox error={error} />
       ) : data ? (
         <>
-          <PullRequestList pulls={[data.pr]} />
-          {data.body.trim() && (
-            <div className="whitespace-pre-wrap border-b border-gray-200 px-6 py-4 text-sm text-gray-800 dark:border-gray-800 dark:text-gray-200">
-              {data.body}
-            </div>
-          )}
+          <div className="card">
+            <PullRequestList pulls={[data.pr]} />
+            {data.body.trim() && (
+              <div className="whitespace-pre-wrap border-t border-(--line) px-5 py-4 text-sm text-gray-700 dark:text-gray-300">{data.body}</div>
+            )}
+          </div>
           <PullRequestFiles files={files} />
         </>
       ) : (
-        <p className="px-6 py-10 text-sm text-gray-500 dark:text-gray-400">Pull request #{number} not found.</p>
+        <p className="card px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400">Pull request #{number} not found.</p>
       )}
-    </main>
+    </>
   );
 }

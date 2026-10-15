@@ -1,6 +1,6 @@
 import { CurrentVersions, PendingBanner, RunningReleases } from "@/components/MatrixTable";
 import { ReleaseTimeline } from "@/components/ReleaseTimeline";
-import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { ErrorBox } from "@/components/RepoHeader";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
 import { getBranchChanges, type BranchChanges } from "@/lib/changes";
@@ -34,8 +34,7 @@ export default async function HistoryPage({
   }
 
   return (
-    <main>
-      <RepoHeader owner={owner} repo={repo} active="history" auth={auth} />
+    <>
       {error || !matrix ? (
         <ErrorBox error={error} />
       ) : (
@@ -44,12 +43,12 @@ export default async function HistoryPage({
           <RunningReleases runs={running} />
           <CurrentVersions matrix={matrix} />
           <ReleaseTimeline changes={changes} matrix={matrix} running={running} />
-          <p className="px-6 pb-4 text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Every tag on {changes?.branch ?? "the default branch"} with the pull requests merged since the previous tag. A ring marks
-            the version currently live in an environment. Show another branch with <code>?branch=release/1.x</code>.
+            the version currently live in an environment. Show another branch with <code className="rounded bg-gray-100 px-1 dark:bg-white/10">?branch=release/1.x</code>.
           </p>
         </>
       )}
-    </main>
+    </>
   );
 }

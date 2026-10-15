@@ -1,6 +1,6 @@
 import { CurrentVersions, MatrixTable, PendingBanner, RunningReleases } from "@/components/MatrixTable";
 import { UntaggedChanges } from "@/components/ReleaseTimeline";
-import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { ErrorBox } from "@/components/RepoHeader";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
 import { getBranchChanges, type BranchChanges } from "@/lib/changes";
@@ -39,8 +39,7 @@ export default async function DeploymentsPage({
   }
 
   return (
-    <main>
-      <RepoHeader owner={owner} repo={repo} active="deployments" auth={auth} />
+    <>
       {error || !matrix ? (
         <ErrorBox error={error} />
       ) : (
@@ -50,12 +49,12 @@ export default async function DeploymentsPage({
           <UntaggedChanges changes={changes} />
           <CurrentVersions matrix={matrix} />
           <MatrixTable matrix={matrix} firstColumn="Releases" owner={owner} repo={repo} />
-          <p className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Rows are grouped by tag/branch. A ring marks the version currently live in an environment. Reorder
-            columns with <code>?envs=A-UI,UAT-UI,PAV-UI</code>.
+            columns with <code className="rounded bg-gray-100 px-1 dark:bg-white/10">?envs=A-UI,UAT-UI,PAV-UI</code>.
           </p>
         </>
       )}
-    </main>
+    </>
   );
 }

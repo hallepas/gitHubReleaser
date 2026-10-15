@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { dispatchWorkflow, rerunFailedJobs, rerunJob, type ReviewResult } from "@/app/actions";
 import type { StageCell, StageOptions } from "@/lib/model";
 import { ApprovalControls } from "./ApprovalControls";
+import { ExternalIcon, GitHubIcon, RefreshIcon } from "./icons";
 import { StageChip } from "./StageChip";
 
 interface Props {
@@ -42,11 +43,17 @@ export function StageMenu({ owner, repo, name, cell, release, runId, gitRef }: P
     <div ref={box} className="relative">
       <StageChip name={name} cell={{ ...base, url: undefined }} onClick={() => setOpen((o) => !o)} />
       {open && (
-        <div className="absolute right-0 z-20 mt-1 w-80 rounded border border-gray-200 bg-white p-3 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/50">
-          <div className="font-medium">
-            {release} → {name}
+        <div className="popover absolute right-0 z-30 mt-2 w-80 p-4 text-sm">
+          <div className="flex items-center gap-2 font-semibold">
+            <span className="font-mono">{release}</span>
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+            <span>{name}</span>
           </div>
-          {base.tooltip && <div className="mb-3 whitespace-pre-line text-xs text-gray-500 dark:text-gray-400">{base.tooltip}</div>}
+          {base.tooltip && (
+            <div className="mb-3 mt-2 whitespace-pre-line rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600 dark:bg-white/5 dark:text-gray-400">{base.tooltip}</div>
+          )}
           {cell?.approval ? (
             <>
               <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">Required reviewers: {cell.approval.reviewers.join(", ") || "–"}</div>
@@ -66,8 +73,15 @@ export function StageMenu({ owner, repo, name, cell, release, runId, gitRef }: P
             <p className="text-xs text-gray-500 dark:text-gray-400">No GitHub Actions run is linked to this stage.</p>
           )}
           {githubUrl && (
-            <a href={githubUrl} target="_blank" rel="noreferrer" className="mt-3 block border-t border-gray-100 pt-2 text-xs text-blue-700 hover:underline dark:border-gray-800 dark:text-blue-400">
-              Open in GitHub ↗
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex items-center gap-1.5 border-t border-(--line) pt-3 text-xs font-medium text-gray-500 transition-colors hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-300"
+            >
+              <GitHubIcon className="h-3.5 w-3.5" />
+              Open in GitHub
+              <ExternalIcon className="ml-auto h-3 w-3" />
             </a>
           )}
         </div>
@@ -118,7 +132,10 @@ function RedeployOptions({
   }, [owner, repo, runId, jobId, refName]);
 
   if (error) return <p className="text-xs text-red-700 dark:text-red-400">{error}</p>;
-  if (!options) return <p className="text-xs text-gray-500 dark:text-gray-400">Checking what can be done…</p>;
+  if (!options) return <div className="flex flex-col gap-2">
+        <span className="skeleton h-8" />
+        <span className="skeleton h-8" />
+      </div>;
   if (done) return <p className="text-xs font-medium text-green-700 dark:text-green-400">{done}</p>;
 
   const execute = (fn: () => Promise<ReviewResult>, message: string) =>
@@ -165,11 +182,11 @@ function RedeployOptions({
             <button
               disabled={pending}
               onClick={() => execute(selected.action, "✓ Started – the stage will update shortly.")}
-              className="rounded bg-blue-600 px-3 py-1 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="btn btn-primary"
             >
               {pending ? "Starting…" : "Confirm"}
             </button>
-            <button disabled={pending} onClick={() => setConfirm(undefined)} className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
+            <button disabled={pending} onClick={() => setConfirm(undefined)} className="btn btn-outline">
               Cancel
             </button>
           </div>
@@ -180,8 +197,9 @@ function RedeployOptions({
             key={c.id}
             onClick={() => setConfirm(c.id)}
             title={c.detail}
-            className="rounded border border-blue-600 px-2 py-1 text-left font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950"
+            className="group flex items-center gap-2 rounded-lg border border-(--line) px-3 py-2 text-left font-medium transition-all hover:border-brand-500/50 hover:bg-brand-500/5 hover:text-brand-700 dark:hover:text-brand-300"
           >
+            <RefreshIcon className="h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform group-hover:rotate-90 group-hover:text-brand-500" />
             {c.label}
           </button>
         ))

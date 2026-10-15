@@ -7,13 +7,13 @@ const PAT_URL =
   "https://github.com/settings/tokens/new?scopes=repo,read:org&description=Release%20Dashboard";
 
 function Code({ children }: { children: React.ReactNode }) {
-  return <pre className="mt-2 overflow-x-auto rounded bg-gray-900 px-3 py-2 text-xs text-gray-100 dark:bg-gray-800">{children}</pre>;
+  return <pre className="mt-2 overflow-x-auto rounded-lg border border-white/5 bg-gray-950 px-4 py-3 font-mono text-xs text-gray-100 shadow-inner">{children}</pre>;
 }
 
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-500 to-indigo-500 text-xs font-bold text-white shadow-md shadow-brand-500/30">
         {n}
       </span>
       <div className="min-w-0 flex-1">
@@ -113,8 +113,9 @@ export function SetupGuide({ status }: { status: Problem }) {
   }[status.problem];
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="rounded-lg border border-amber-300 bg-amber-50 p-5 dark:border-amber-800 dark:bg-amber-950">
+    <div className="mx-auto w-full max-w-3xl animate-fade-up px-6 py-10">
+      <div className="card relative overflow-hidden border-amber-400/40 p-6 pl-7">
+        <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-amber-400 to-orange-500" />
         <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">⚠ {title}</h2>
         <p className="mt-1 text-sm text-amber-900 dark:text-amber-200">{status.message}</p>
         <p className="mt-2 text-xs text-amber-800 dark:text-amber-300">
@@ -124,7 +125,7 @@ export function SetupGuide({ status }: { status: Problem }) {
         </p>
       </div>
 
-      <div className="mt-8">
+      <div className="card mt-6 p-6">
         {status.problem === "tls" ? (
           <TlsSteps />
         ) : status.problem === "network" ? (
@@ -154,7 +155,7 @@ export function SetupGuide({ status }: { status: Problem }) {
 export function AuthWarnings({ warnings }: { warnings: string[] }) {
   if (!warnings.length) return null;
   return (
-    <div className="border-b border-amber-200 bg-amber-50 px-6 py-2 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+    <div className="border-b border-amber-400/30 bg-amber-400/10 px-6 py-2 text-xs text-amber-900 dark:text-amber-200">
       {warnings.map((w) => (
         <div key={w}>
           ⚠ {w}{" "}

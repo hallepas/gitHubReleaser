@@ -2,18 +2,21 @@
 import Link from "next/link";
 import { formatDate, type PullRequest, type StageStatus } from "@/lib/model";
 import { PullRequestActions } from "./PullRequestActions";
+import { BranchIcon, ExternalIcon } from "./icons";
+import { RepoAvatar } from "./RepoAvatar";
 import { Icon, STYLES } from "./StageChip";
 
 const TONES = {
-  green: "border-green-700 text-green-800 dark:border-green-600 dark:text-green-300",
-  red: "border-red-700 text-red-800 dark:border-red-600 dark:text-red-300",
-  amber: "border-amber-600 text-amber-800 dark:border-amber-500 dark:text-amber-300",
-  gray: "border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400",
+  green: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  red: "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300",
+  amber: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  gray: "border-(--line) bg-gray-100/60 text-gray-600 dark:bg-white/5 dark:text-gray-400",
+  violet: "border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-300",
 };
 
 function Badge({ tone, children, title }: { tone: keyof typeof TONES; children: React.ReactNode; title?: string }) {
   return (
-    <span title={title} className={`inline-flex h-6 items-center rounded border px-2 text-xs ${TONES[tone]}`}>
+    <span title={title} className={`inline-flex h-6 items-center gap-1 rounded-full border px-2.5 text-[11px] font-medium ${TONES[tone]}`}>
       {children}
     </span>
   );
@@ -33,7 +36,7 @@ const CHECKS_TEXT: Record<StageStatus, string> = {
 
 function Checks({ status }: { status: StageStatus }) {
   return (
-    <span className={`inline-flex h-6 items-center gap-1.5 rounded border px-2 text-xs ${STYLES[status]}`}>
+    <span className={`inline-flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-[11px] font-medium ${STYLES[status]}`}>
       <Icon status={status} />
       {CHECKS_TEXT[status]}
     </span>
@@ -76,30 +79,30 @@ function Mergeability({ pr }: { pr: PullRequest }) {
 
 export function PullRequestList({ pulls, showRepo = false }: { pulls: PullRequest[]; showRepo?: boolean }) {
   return (
-    <ul className="divide-y divide-gray-100 border-y border-gray-200 dark:divide-gray-800/60 dark:border-gray-800">
+    <ul className="stagger divide-y divide-(--line)">
       {pulls.map((pr) => (
         <li
           key={`${pr.owner}/${pr.repo}#${pr.number}`}
-          className={`flex flex-col gap-3 py-3 hover:bg-gray-50 lg:flex-row lg:items-start dark:hover:bg-gray-900 ${showRepo ? "px-4" : "px-6"}`}
+          className="flex flex-col gap-3 px-5 py-4 transition-colors first:rounded-t-2xl last:rounded-b-2xl hover:bg-gray-50/80 lg:flex-row lg:items-start dark:hover:bg-white/3"
         >
           <div className="flex min-w-0 flex-1 gap-3">
             {pr.author ? (
-              <img src={pr.author.avatarUrl} alt={pr.author.login} title={pr.author.login} className="h-8 w-8 shrink-0 rounded-full" />
+              <img src={pr.author.avatarUrl} alt={pr.author.login} title={pr.author.login} className="h-9 w-9 shrink-0 rounded-full ring-2 ring-(--line)" />
             ) : (
-              <span className="h-8 w-8 shrink-0 rounded-full bg-gray-200 dark:bg-gray-700" />
+              <span className="h-9 w-9 shrink-0 rounded-full bg-gray-200 dark:bg-gray-700" />
             )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={`/r/${pr.owner}/${pr.repo}/pulls/${pr.number}`}
-                  className="font-medium text-blue-700 hover:underline dark:text-blue-400"
+                  className="font-medium text-gray-900 transition-colors hover:text-brand-600 dark:text-gray-100 dark:hover:text-brand-300"
                 >
-                  #{pr.number} {pr.title}
+                  <span className="font-normal text-gray-400 dark:text-gray-500">#{pr.number}</span> {pr.title}
                 </Link>
-                <a href={pr.url} target="_blank" rel="noreferrer" className="text-xs text-gray-500 hover:underline dark:text-gray-400">
-                  GitHub ↗
+                <a href={pr.url} target="_blank" rel="noreferrer" title="Open on GitHub" className="text-gray-400 transition-colors hover:text-gray-700 dark:hover:text-gray-200">
+                  <ExternalIcon className="h-3.5 w-3.5" />
                 </a>
-                {pr.state === "MERGED" && <Badge tone="green">Merged</Badge>}
+                {pr.state === "MERGED" && <Badge tone="violet">Merged</Badge>}
                 {pr.state === "CLOSED" && <Badge tone="red">Closed</Badge>}
                 {pr.isDraft && <Badge tone="gray">Draft</Badge>}
                 {pr.labels.map((l) => {
@@ -107,7 +110,7 @@ export function PullRequestList({ pulls, showRepo = false }: { pulls: PullReques
                   return (
                     <span
                       key={l.name}
-                      className="rounded-full border px-2 text-xs"
+                      className="rounded-full border px-2 text-[11px] font-medium"
                       style={color ? { borderColor: color, backgroundColor: `${color}33` } : undefined}
                     >
                       {l.name}
@@ -115,16 +118,20 @@ export function PullRequestList({ pulls, showRepo = false }: { pulls: PullReques
                   );
                 })}
               </div>
-              <div className="mt-0.5 flex flex-wrap gap-x-4 text-xs text-gray-600 dark:text-gray-400">
+              <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
                 {showRepo && (
-                  <Link href={`/r/${pr.owner}/${pr.repo}/pulls`} className="hover:underline">
-                    {pr.owner}/{pr.repo}
+                  <Link href={`/r/${pr.owner}/${pr.repo}/pulls`} className="inline-flex items-center gap-1.5 font-medium text-gray-700 hover:text-brand-600 dark:text-gray-300 dark:hover:text-brand-300">
+                    <RepoAvatar repo={`${pr.owner}/${pr.repo}`} size="sm" />
+                    {pr.repo}
                   </Link>
                 )}
                 {pr.author && <span>{pr.author.login}</span>}
-                <span className="font-mono">
-                  {pr.baseRef} ← {pr.fromFork ? "fork:" : ""}
-                  {pr.headRef}
+                <span className="inline-flex min-w-0 max-w-full items-center gap-1 font-mono" title={`${pr.baseRef} ← ${pr.headRef}`}>
+                  <BranchIcon className="h-3 w-3" />
+                  <span className="truncate">
+                    {pr.baseRef} ← {pr.fromFork ? "fork:" : ""}
+                    {pr.headRef}
+                  </span>
                 </span>
                 <span>updated {formatDate(pr.updatedAt)}</span>
               </div>

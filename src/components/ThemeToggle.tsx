@@ -59,8 +59,19 @@ export function ThemeToggle() {
     window.dispatchEvent(new Event(EVENT));
   };
 
+  const index = OPTIONS.findIndex((o) => o.value === pref);
+
   return (
-    <div role="group" aria-label="Color theme" className="inline-flex gap-0.5 rounded-full border border-gray-300 p-0.5 dark:border-gray-700">
+    <div
+      role="group"
+      aria-label="Color theme"
+      className="relative inline-flex shrink-0 rounded-full border border-(--line) bg-(--surface-solid) p-0.5 shadow-sm"
+    >
+      <span
+        aria-hidden
+        className="absolute top-0.5 left-0.5 h-7 w-7 rounded-full bg-linear-to-br from-brand-500 to-indigo-500 shadow-md shadow-brand-500/30 transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)]"
+        style={{ transform: `translateX(${index * 1.75}rem)` }}
+      />
       {OPTIONS.map((o) => (
         <button
           key={o.value}
@@ -69,10 +80,8 @@ export function ThemeToggle() {
           aria-label={o.title}
           aria-pressed={pref === o.value}
           onClick={() => choose(o.value)}
-          className={`rounded-full p-1 transition-colors ${
-            pref === o.value
-              ? "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-              : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+          className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
+            pref === o.value ? "text-white" : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
           }`}
         >
           <svg

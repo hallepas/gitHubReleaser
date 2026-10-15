@@ -186,6 +186,21 @@ export function formatDate(iso: string): string {
   });
 }
 
+/** Short relative time such as "5m ago" or "3d ago"; older dates fall back to the calendar date. */
+export function timeAgo(iso: string, now = Date.now()): string {
+  const seconds = Math.round((now - new Date(iso).getTime()) / 1000);
+  if (!Number.isFinite(seconds)) return "";
+  if (seconds < 45) return "just now";
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 14) return `${days}d ago`;
+  if (days < 60) return `${Math.round(days / 7)}w ago`;
+  return formatDate(iso).slice(0, 10);
+}
+
 export function parseActionsUrl(url?: string): { runId?: number; jobId?: number } {
   const m = /\/actions\/runs\/(\d+)(?:\/job\/(\d+))?/.exec(url ?? "");
   return { runId: m ? Number(m[1]) : undefined, jobId: m?.[2] ? Number(m[2]) : undefined };

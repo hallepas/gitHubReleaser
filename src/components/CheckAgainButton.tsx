@@ -10,7 +10,7 @@ export function CheckAgainButton() {
     <button
       onClick={() => startTransition(() => router.refresh())}
       disabled={pending}
-      className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+      className="btn btn-primary px-4 py-2 text-sm"
     >
       {pending ? "Checking…" : "Check again"}
     </button>

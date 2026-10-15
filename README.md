@@ -37,13 +37,14 @@ GitHub has environments, deployments and approval gates, but no single page that
       <h3>📋 Releases at a glance</h3>
       <p>GitHub Deployments grouped by tag or branch, with one column per environment in pipeline order.</p>
       <ul>
-        <li>Cards show the <b>version currently live</b> in each environment.</li>
-        <li>A ring marks the live version's chip.</li>
-        <li>A banner lists <b>pending approvals</b> with Approve / Reject buttons.</li>
-        <li><b>In progress</b> shows the step a running release is on, until the run is done.</li>
+        <li>Environment cards in promotion order show the <b>version currently live</b> in each environment, with a drift badge: <i>Latest</i>, <i>In sync with …</i> or <i>N behind …</i>.</li>
+        <li>Stage chips in pipeline order. A ring and a pulsing dot mark the live version, a striped animated chip a running stage, an amber chip a pending approval.</li>
+        <li>A banner lists <b>pending approvals</b> with Approve / Reject buttons. It shows the first three and folds the rest.</li>
+        <li><b>In progress</b> shows a live progress bar (jobs done / total) and the step a running release is on, until the run is done.</li>
         <li>A stage only turns green when its whole stage is done (e.g. "Deploy ArgoCD d" after the environment gate), not just the job that uses the environment.</li>
         <li>A hint shows when the default branch has <b>pull requests that are not in any tag yet</b>.</li>
-        <li>Auto-refresh every 60 seconds, every 10 seconds while something is running.</li>
+        <li>Relative times ("16h ago") with the exact date next to them.</li>
+        <li>Auto-refresh every 60 seconds, every 10 seconds while something is running. A switch in the tab bar turns it off; a countdown ring shows the next refresh and "Updated 12s ago" the age of the data.</li>
       </ul>
     </td>
     <td width="58%"><img src="docs/screenshots/releases.png" alt="Releases view"></td>
@@ -66,29 +67,44 @@ GitHub has environments, deployments and approval gates, but no single page that
   </tr>
   <tr>
     <td width="42%" valign="top">
-      <h3>🔎 Find any repository</h3>
-      <p>Start typing and get suggestions from <b>every repository you can access</b>, even if you don't know its exact name.</p>
+      <h3>🔎 Jump to any repository</h3>
+      <p>Press <kbd>⌘</kbd> <kbd>K</kbd> / <kbd>Ctrl</kbd> <kbd>K</kbd> or <kbd>/</kbd> anywhere and start typing. Suggestions come from <b>every repository you can access</b>, even if you don't know its exact name.</p>
       <ul>
-        <li><b>★ Favorites</b> stay on the home page.</li>
-        <li><b>Recently viewed</b> repositories are remembered.</li>
+        <li>The <b>sidebar</b> lists your <b>★ favorites</b> and <b>recently viewed</b> repositories for one-click switching. Switching keeps the current tab, e.g. you stay on Pipelines.</li>
+        <li>The repository header and tabs stay in place while you switch; the content shows a loading skeleton until GitHub has answered.</li>
         <li><b>Suggested</b> repositories can be preset for your team.</li>
       </ul>
     </td>
-    <td width="58%"><img src="docs/screenshots/search.png" alt="Repository search with suggestions"><br><br><img src="docs/screenshots/home.png" alt="Home page with favorites"></td>
+    <td width="58%"><img src="docs/screenshots/search.png" alt="Repository search with suggestions"></td>
   </tr>
   <tr>
-    <td width="58%"><img src="docs/screenshots/pipelines.png" alt="Pipelines view"></td>
+    <td width="58%"><img src="docs/screenshots/home.png" alt="Overview page in dark mode"></td>
+    <td width="42%" valign="top">
+      <h3>🏠 Overview</h3>
+      <p>Your start page: a greeting with the repository search, and everything you need next.</p>
+      <ul>
+        <li>Counters for <b>reviews waiting for you</b>, favorites, recently viewed and accessible repositories.</li>
+        <li>A tile per favorite with quick links to Releases, History, Pipelines and Pull requests.</li>
+        <li><b>Jump back in</b>: recently viewed and suggested repositories.</li>
+        <li>Every pull request <b>waiting for your review</b>, across all repositories.</li>
+        <li>Light, dark or system theme (toggle in the top bar).</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
     <td width="42%" valign="top">
       <h3>⚙️ Pipelines view</h3>
       <p>Every run of a GitHub Actions workflow, with <b>one chip per job</b>. Useful for repositories that don't use deployments.</p>
       <ul>
         <li>Pick the workflow from the dropdown. Release/deploy workflows are chosen by default.</li>
-        <li>All pending approvals at the top.</li>
+        <li>All pending approvals at the top. The first three are shown, the rest are folded.</li>
         <li>The same stage menu as in the Releases view.</li>
       </ul>
     </td>
+    <td width="58%"><img src="docs/screenshots/pipelines.png" alt="Pipelines view"></td>
   </tr>
   <tr>
+    <td width="58%"><img src="docs/screenshots/history.png" alt="History timeline"></td>
     <td width="42%" valign="top">
       <h3>🕓 History</h3>
       <p>A timeline of every tag on the default branch, newest first.</p>
@@ -100,7 +116,6 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li>Another branch: <code>?branch=release/1.x</code>.</li>
       </ul>
     </td>
-    <td width="58%"></td>
   </tr>
   <tr>
     <td width="42%" valign="top">
@@ -111,7 +126,7 @@ GitHub has environments, deployments and approval gates, but no single page that
         <li><b>Approve</b> or <b>Request changes</b> with a comment.</li>
         <li><b>Merge</b> with any method the repository allows (merge, squash, rebase), optionally deleting the branch.</li>
         <li><b>Close</b> without merging, or <b>Close & delete branch</b>.</li>
-        <li>The home page lists every PR <b>waiting for your review</b>, across all repositories.</li>
+        <li>The Overview page lists every PR <b>waiting for your review</b>, across all repositories.</li>
       </ul>
       <p>Branch protection and required reviews still apply. GitHub decides who may merge.</p>
     </td>
@@ -201,7 +216,7 @@ Edit `.env.local`:
 ```ini
 # Leave empty to use `gh auth token`
 GITHUB_TOKEN=
-# Repositories shown as "Suggested" on the home page
+# Repositories shown as "Suggested" on the Overview page
 DASHBOARD_REPOS=my-org/my-service,my-org/other-service
 ```
 
@@ -211,7 +226,7 @@ DASHBOARD_REPOS=my-org/my-service,my-org/other-service
 npm run dev
 ```
 
-Open **http://localhost:3000** in your normal browser (Chrome, Edge, Safari or Firefox). Search for a repository, then star it ☆ to keep it on the home page.
+Open **http://localhost:3000** in your normal browser (Chrome, Edge, Safari or Firefox). Search for a repository (<kbd>⌘</kbd> <kbd>K</kbd> / <kbd>Ctrl</kbd> <kbd>K</kbd> or <kbd>/</kbd>), then star it ☆ to keep it in the sidebar and on the Overview page.
 
 To use a different port: `PORT=3123 npm run dev` (Windows PowerShell: `$env:PORT=3123; npm run dev`).
 
@@ -231,7 +246,7 @@ All settings go in `.env.local`.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GITHUB_TOKEN` | output of `gh auth token` | Token used for all GitHub API calls |
-| `DASHBOARD_REPOS` | – | Comma-separated `owner/repo` list shown as "Suggested" on the home page |
+| `DASHBOARD_REPOS` | – | Comma-separated `owner/repo` list shown as "Suggested" on the Overview page |
 | `DASHBOARD_HIDE_ENVS` | `copilot` | Environments to hide (comma-separated) |
 | `DASHBOARD_MAX_ROWS` | `20` | Releases, runs or pull requests shown per page |
 | `DASHBOARD_TIMEZONE` | `Europe/Zurich` | Timezone for dates |
@@ -255,7 +270,7 @@ URL options:
 | Continue pipeline | `POST actions/runs/{id}/rerun-failed-jobs` |
 | Run again for a tag | `POST actions/workflows/{id}/dispatches` |
 | New tag | GraphQL `refs` (branches, tags), `POST git/refs` |
-| Pull requests | GraphQL `repository.pullRequests`; home page: `search` with `review-requested:@me` |
+| Pull requests | GraphQL `repository.pullRequests`; Overview page: `search` with `review-requested:@me` |
 | Changed files | REST `pulls/{n}/files` |
 | Approve / request changes | `POST pulls/{n}/reviews` |
 | Merge | `PUT pulls/{n}/merge` (with the head SHA you saw, so newer pushes are not merged) |
@@ -276,7 +291,7 @@ jobs:
 
 - The GitHub token stays on the server and is never sent to the browser.
 - The server listens on **127.0.0.1 only**, because it acts as *you*, including approvals. Don't expose it on a network or share one instance between several people.
-- Favorites and recently viewed repos are stored in your browser (`localStorage`).
+- Favorites, recently viewed repos and the theme are stored in your browser (`localStorage`).
 
 ## 🩺 Troubleshooting
 
@@ -336,13 +351,13 @@ npm run build      # production build
 ```
 src/
   app/                          Next.js App Router
-    page.tsx                    Home page (search, favorites, review requests)
-    r/[owner]/[repo]/…          Releases, History, Pipelines and Pull requests views
+    page.tsx                    Overview page (search, counters, favorites, review requests)
+    r/[owner]/[repo]/…          Repo header and tabs (layout), Releases, History, Pipelines and Pull requests views
     api/repos                   Repository list for search (cached for 10 min)
     api/stage-options           What can be done with a stage (loaded when a chip is clicked)
     api/tag-options             Branches, tags and version suggestions for "New tag"
     actions.ts                  Server actions: approve, reject, re-run, dispatch, create tag, review/merge/close PRs
-  components/                   UI (MatrixTable, StageMenu, RepoPicker, …)
+  components/                   UI (Sidebar, MatrixTable, StageMenu, RepoPicker, ThemeToggle, …)
   lib/
     github.ts                   REST and GraphQL client, token handling
     data.ts                     Builds the release/stage matrix

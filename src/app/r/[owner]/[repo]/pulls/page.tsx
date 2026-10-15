@@ -1,5 +1,7 @@
 import { PullRequestList } from "@/components/PullRequestList";
-import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { ErrorBox } from "@/components/RepoHeader";
+import { PullRequestIcon } from "@/components/icons";
+import { EmptyState } from "@/components/ui";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
 import type { PullRequest } from "@/lib/model";
@@ -21,15 +23,18 @@ export default async function PullsPage({ params }: { params: Promise<{ owner: s
   }
 
   return (
-    <main>
-      <RepoHeader owner={owner} repo={repo} active="pulls" auth={auth} />
+    <div className="card">
       {error ? (
-        <ErrorBox error={error} />
+        <div className="p-4">
+          <ErrorBox error={error} />
+        </div>
       ) : pulls.length ? (
         <PullRequestList pulls={pulls} />
       ) : (
-        <p className="px-6 py-10 text-sm text-gray-500 dark:text-gray-400">No open pull requests.</p>
+        <EmptyState icon={<PullRequestIcon className="h-5 w-5" />} title="No open pull requests">
+          Everything is merged. Nice!
+        </EmptyState>
       )}
-    </main>
+    </div>
   );
 }

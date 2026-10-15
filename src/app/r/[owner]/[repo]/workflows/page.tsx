@@ -1,8 +1,10 @@
 import { MatrixTable, PendingBanner } from "@/components/MatrixTable";
-import { ErrorBox, RepoHeader } from "@/components/RepoHeader";
+import { ErrorBox } from "@/components/RepoHeader";
 import { SetupGuide } from "@/components/SetupGuide";
 import { getAuthStatus } from "@/lib/auth";
 import { WorkflowPicker } from "@/components/WorkflowPicker";
+import { PipelineIcon } from "@/components/icons";
+import { EmptyState } from "@/components/ui";
 import { getLatestWorkflowId, getWorkflowMatrix, getWorkflows, type Workflow } from "@/lib/data";
 import type { Matrix } from "@/lib/model";
 
@@ -35,20 +37,22 @@ export default async function WorkflowsPage({
   }
 
   return (
-    <main>
-      <RepoHeader owner={owner} repo={repo} active="workflows" auth={auth}>
-        {workflows.length > 0 && <WorkflowPicker workflows={workflows} selected={selected} />}
-      </RepoHeader>
+    <>
+      {workflows.length > 0 && <WorkflowPicker workflows={workflows} selected={selected} />}
       {error ? (
         <ErrorBox error={error} />
       ) : !matrix ? (
-        <p className="px-6 py-10 text-sm text-gray-500 dark:text-gray-400">No GitHub Actions workflows in this repository.</p>
+        <div className="card">
+          <EmptyState icon={<PipelineIcon className="h-5 w-5" />} title="No workflows">
+            There are no GitHub Actions workflows in this repository.
+          </EmptyState>
+        </div>
       ) : (
         <>
           <PendingBanner matrix={matrix} />
           <MatrixTable matrix={matrix} firstColumn="Runs" owner={owner} repo={repo} />
         </>
       )}
-    </main>
+    </>
   );
 }
