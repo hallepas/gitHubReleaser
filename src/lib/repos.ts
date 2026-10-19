@@ -1,4 +1,4 @@
-import { restAll } from "./github";
+import { resolveToken, restAll } from "./github";
 
 export interface RepoSummary {
   fullName: string;
@@ -17,7 +17,7 @@ interface ApiRepo {
 }
 
 const TTL_MS = 10 * 60 * 1000;
-let cache: { at: number; data: Promise<RepoSummary[]> } | undefined;
+let cache: { at: number; token: string; data: Promise<RepoSummary[]> } | undefined;
 
 async function load(): Promise<RepoSummary[]> {
   const repos = await restAll<ApiRepo>(
@@ -36,9 +36,10 @@ async function load(): Promise<RepoSummary[]> {
 
 /** All repositories the token can see, cached in memory (shared across requests). */
 export function getAllRepos(force = false): Promise<RepoSummary[]> {
-  if (force || !cache || Date.now() - cache.at > TTL_MS) {
+  const { token } = resolveToken();
+  if (force || !cache || cache.token !== token || Date.now() - cache.at > TTL_MS) {
     const data = load();
-    cache = { at: Date.now(), data };
+    cache = { at: Date.now(), token, data };
     data.catch(() => {
       if (cache?.data === data) cache = undefined;
     });

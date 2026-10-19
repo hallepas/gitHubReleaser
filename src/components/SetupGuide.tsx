@@ -1,5 +1,6 @@
 import type { AuthStatus } from "@/lib/auth";
 import { CheckAgainButton } from "./CheckAgainButton";
+import { GhLogin } from "./GhLogin";
 
 type Problem = Extract<AuthStatus, { ok: false }>;
 
@@ -42,8 +43,22 @@ function CliSteps({ installed }: { installed: boolean }) {
         </Step>
       )}
       <Step n={n++} title="Log in to GitHub">
-        In a terminal run the following and choose <i>GitHub.com → HTTPS → Login with a web browser</i>:
-        <Code>gh auth login</Code>
+        {installed ? (
+          <>
+            Click the button, copy the code and confirm it on GitHub. The dashboard continues by itself.
+            <div className="mt-3">
+              <GhLogin />
+            </div>
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+              Or in a terminal: <code>gh auth login</code>, then click <b>Check again</b>.
+            </div>
+          </>
+        ) : (
+          <>
+            In a terminal run the following and choose <i>GitHub.com → HTTPS → Login with a web browser</i>:
+            <Code>gh auth login</Code>
+          </>
+        )}
       </Step>
       <Step n={n++} title="Authorize SSO (if your organization uses it)">
         If your organization enforces SAML single sign-on, run:

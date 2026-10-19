@@ -182,6 +182,8 @@ gh auth status              # should show "Logged in to github.com"
 
 The dashboard reuses the token from `gh auth token` automatically.
 
+You can also skip the terminal: the setup guide has a **Log in with GitHub** button, and clicking your name in the top bar lets you **switch between GitHub CLI accounts** or **add another account**. Both run `gh auth login --web` for you and show the one-time code to paste on GitHub.
+
 **Option B: Personal access token (PAT)**
 
 Create a token at *GitHub → Settings → Developer settings → Personal access tokens* and put it in `.env.local` (see step 4).
