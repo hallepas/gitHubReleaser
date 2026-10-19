@@ -102,11 +102,10 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
     if (statusOf(d) === "success") currentByEnv.set(d.environment, d);
   }
 
-  const rows: (MatrixRow & { cells: Record<string, CellWithTime>; latest: string })[] = [];
+  const rows: (MatrixRow & { cells: Record<string, CellWithTime> })[] = [];
   const newestCells = new Set<string>();
   for (const [key, list] of groups) {
     const first = list.reduce((a, b) => (a.createdAt < b.createdAt ? a : b));
-    const latest = list.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
     const cells: Record<string, CellWithTime> = {};
     // list is newest-first, so the first hit per environment wins.
     for (const d of list) {
@@ -152,12 +151,11 @@ export async function getDeploymentMatrix(owner: string, repo: string): Promise<
       refUrl: first.ref ? `${repoUrl}/tree/${first.ref.name}` : first.commit?.url,
       actor: first.creator ?? undefined,
       createdAt: first.createdAt,
-      latest: latest.createdAt,
       cells,
     });
   }
 
-  rows.sort((a, b) => b.latest.localeCompare(a.latest));
+  rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const visible = rows.slice(0, MAX_ROWS);
   const columns = orderColumns(visible, [
     ...environments.nodes.map((e) => e.name).filter((n) => !hidden.has(n.toLowerCase())),
